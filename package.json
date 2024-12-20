@@ -1,14 +1,19 @@
 {
   "name": "alloy-cli-frontend",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "dist/index.cjs",
   "module": "dist/index.cjs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dinh-pham-optimizely/alloy-cli-frontend"
+  },
+  "bugs": "https://github.com/dinh-pham-optimizely/alloy-cli-frontend/issues",
   "files": [
     "dist"
   ],
   "bin": {
-    "alloy-cli": "./dist/index.cjs"
+    "alloy-cli-frontend": "./dist/index.cjs"
   },
   "scripts": {
     "cli": "bun index.ts",
