@@ -6,4 +6,7 @@ export default defineConfig({
   splitting: false,
   sourcemap: true,
   clean: true,
+  publicDir: './public',
+  treeshake: true,
+  minify: true,
 });

@@ -6,11 +6,16 @@ import {
   getComponentModelName,
   getComponentPageName,
   getComponentTemplateName,
+  getTemplatePath,
   getTypeFullText,
+  replaceComponentTextVariants,
+  replaceTemplateComments,
   turnPascalCaseToCamelCase,
   turnPascalCaseToCapCaseWithSpacing,
   turnPascalCaseToKebabCase,
 } from '../lib/helpers';
+import path from 'node:path';
+
 
 describe('test componentName getters', () =>
 {
@@ -115,5 +120,79 @@ describe('getTypeFullText', () =>
     expect(getTypeFullText('a')).toBe('atoms');
     expect(getTypeFullText('m')).toBe('molecules');
 
+  });
+});
+
+describe('getTemplatePath', () =>
+{
+  test('getTemplatePath should return correct template file path', () =>
+  {
+    const fileName = 'test.txt';
+    jest.spyOn(path, 'resolve').mockImplementation((path) => `/fakepath/${fileName}`);
+
+    const result = getTemplatePath(fileName);
+
+    expect(result).toBe(`/fakepath/test.txt`);
+  });
+});
+
+describe('replaceComponentTextVariants', () =>
+{
+  const componentName = 'ComponentTest';
+
+  test('replaceComponentTextVariants should replace projectPrefix flags', () =>
+  {
+    const projectPrefix = 'xyz';
+
+    const content = '${projectPrefix} test ${projectPrefix} ${projectPrefix}';
+    const result = replaceComponentTextVariants(content, componentName, projectPrefix);
+
+    expect(result).toBe('xyz test xyz xyz');
+  });
+
+  test('replaceComponentTextVariants should not replace projectPrefix flag when value is undefined', () =>
+  {
+    const content = '${projectPrefix} test ${projectPrefix}';
+    const result = replaceComponentTextVariants(content, componentName);
+
+    expect(result).toBe(content);
+  });
+
+  test('replaceComponentTextVariants should replace type flag', () =>
+  {
+    const type = 'o';
+    const content = '${type} test ${type} test ${type}';
+    const result = replaceComponentTextVariants(content, componentName, undefined, type);
+
+    expect(result).toBe('o test o test o');
+  });
+
+  test('replaceComponentTextVariants should not replace type flag when value is undefined', () =>
+  {
+    const content = '${type} test ${type}';
+    const result = replaceComponentTextVariants(content, componentName);
+
+    expect(result).toBe(content);
+  });
+
+  test('replaceComponentTextVariants should replace all component name variants', () =>
+  {
+    const content = '${componentModelName} ${componentNameKebabCase} ${componentTemplateName} ${componentDataName} ${componentPageName} ${componentNameCamelCase} ${componentAsCapCaseWithSpacing} test ${componentModelName} ${componentNameKebabCase} ${componentTemplateName} ${componentDataName} ${componentPageName} ${componentNameCamelCase} ${componentAsCapCaseWithSpacing}';
+    const result = replaceComponentTextVariants(content, componentName);
+
+    expect(result)
+      .toBe(
+        'ComponentTestModel component-test ComponentTestTemplate componentTestData ComponentTestPage componentTest Component Test test ComponentTestModel component-test ComponentTestTemplate componentTestData ComponentTestPage componentTest Component Test');
+  });
+});
+
+describe('replaceTemplateComments', () =>
+{
+  test('replaceTemplateComments should replace comment flag', () =>
+  {
+    const content = '<-- test comment --> After comment 1 <-- test comment 2 --> After comment 2';
+    const result = replaceTemplateComments(content);
+
+    expect(result).toBe(' After comment 1  After comment 2');
   });
 });
