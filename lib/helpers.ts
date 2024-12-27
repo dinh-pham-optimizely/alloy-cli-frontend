@@ -109,6 +109,69 @@ const appendContentToFile = (filePath: string, content: string) =>
     }
   };
 
+const getTemplatePath = (fileName: string) =>
+  {
+    let localDirectory = path.resolve(__dirname, `templates/${fileName}`);
+
+    if (!fs.existsSync(localDirectory)) {
+      return path.resolve(__dirname, `../public/templates/${fileName}`);
+    }
+
+    return localDirectory;
+  };
+
+const replaceComponentTextVariants = (content: string, componentName: string, projectPrefix?: string, type?: string): string =>
+  {
+    const componentModelName = getComponentModelName(componentName);
+    const componentNameKebabCase = getComponentAsKebabCase(componentName);
+    const componentTemplateName = getComponentTemplateName(componentName);
+    const componentDataName = getComponentDataName(componentName);
+    const componentPageName = getComponentPageName(componentName);
+    const componentNameCamelCase = getComponentAsCamelCase(componentName);
+    const componentAsCapCaseWithSpacing = getComponentAsCapCaseWithSpacing(componentName);
+
+    if (projectPrefix) {
+      content = content.replace(/\${projectPrefix}/g, `${projectPrefix}`);
+    }
+
+    if (type) {
+      content = content.replace(/\${type}/g, `${type}`);
+    }
+
+    return content.replace(/\${componentModelName}/g, `${componentModelName}`)
+      .replace(/\${componentNameKebabCase}/g, `${componentNameKebabCase}`)
+      .replace(/\${componentTemplateName}/g, `${componentTemplateName}`)
+      .replace(/\${componentDataName}/g, `${componentDataName}`)
+      .replace(/\${componentPageName}/g, `${componentPageName}`)
+      .replace(/\${componentNameCamelCase}/g, `${componentNameCamelCase}`)
+      .replace(/\${componentAsCapCaseWithSpacing}/g, `${componentAsCapCaseWithSpacing}`)
+      .replace(/\${componentName}/g, `${componentName}`);
+  };
+
+const replaceTemplateComments = (content: string) => content.replace(/<--.*?-->/g, '');
+
+const replaceComponentTemplatePlaceholder = (content: string, componentName: string, isNeedScript: boolean, isNeedStyle: boolean) =>
+  {
+    const componentNameKebabCase = getComponentAsKebabCase(componentName);
+
+    return content.replace(/<-- CLI placeholder - please don\\'t make any changes -->/g, `    ${isNeedScript ?
+      `\n      <RequireJs path={'${componentNameKebabCase}'} defer />` : ''}${isNeedStyle
+      ?
+      `\n      <RequireCss path={'b-${componentNameKebabCase}'} />`
+      : ''}`);
+  };
+
+const generatedFiles = {
+  PAGE: 'page',
+  PAGE_STORY: 'page-story',
+  TEMPLATE: 'template',
+  COMPONENT: 'component',
+  STATE: 'state',
+  STYLE: 'style',
+  TYPE: 'type',
+  DATA: 'data',
+};
+
 export {
   srcPath,
   getComponentAsKebabCase,
@@ -126,4 +189,9 @@ export {
   turnPascalCaseToKebabCase,
   turnPascalCaseToCamelCase,
   turnPascalCaseToCapCaseWithSpacing,
+  getTemplatePath,
+  replaceComponentTextVariants,
+  replaceTemplateComments,
+  replaceComponentTemplatePlaceholder,
+  generatedFiles,
 };

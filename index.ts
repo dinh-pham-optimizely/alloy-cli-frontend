@@ -1,7 +1,7 @@
 #! /usr/bin/env node
 
 import { program } from '@commander-js/extra-typings';
-import { confirm } from '@inquirer/prompts';
+import { confirm, select } from '@inquirer/prompts';
 import {
   generateComponent,
   generateComponentData,
@@ -13,12 +13,104 @@ import {
   generateTemplateComponent,
 } from './lib/generators';
 import { ComponentType } from './types';
-import { commonActions, getTypeFullText } from './lib/helpers';
+import { commonActions, generatedFiles, getTypeFullText } from './lib/helpers';
+import { Editor, editors } from './lib/editor';
 
 program
   .name('Alloy CLI Frontend')
-  .version('1.0.0')
+  .version('1.0.2')
   .description('Alloy CLI to generate frontend components and more');
+
+program
+  .command('edit-generated-file')
+  .action(async () =>
+  {
+    const selectedGeneratedFile = await select({
+      message: 'Select generated file to modify',
+      choices: [
+        {
+          name: 'Page',
+          value: generatedFiles.PAGE,
+          description: 'Modify page generated file',
+        },
+        {
+          name: 'Page Story',
+          value: generatedFiles.PAGE_STORY,
+          description: 'Modify page story type generated file',
+        },
+        {
+          name: 'Template',
+          value: generatedFiles.TEMPLATE,
+          description: 'Modify component\'s template generated file',
+        },
+        {
+          name: 'Component',
+          value: generatedFiles.COMPONENT,
+          description: 'Modify component generated file',
+        },
+        {
+          name: 'State',
+          value: generatedFiles.STATE,
+          description: 'Modify component\'s state generated file',
+        },
+        {
+          name: 'Style',
+          value: generatedFiles.STYLE,
+          description: 'Modify component\'s style generated file',
+        },
+        {
+          name: 'Type',
+          value: generatedFiles.TYPE,
+          description: 'Modify component\'s type generated file',
+        },
+        {
+          name: 'Data',
+          value: generatedFiles.DATA,
+          description: 'Modify component\'s data generated file',
+        },
+      ],
+    });
+
+    const selectedEditor = await select({
+      message: 'Select your editor to modify generated file',
+      choices: [
+        {
+          name: 'VSCode',
+          value: editors.CODE,
+          description: 'https://code.visualstudio.com/',
+        },
+        {
+          name: 'VSCode Insiders',
+          value: editors.CODE_INSIDERS,
+          description: 'https://code.visualstudio.com/insiders/',
+        },
+        {
+          name: 'IntelliJ IDEA',
+          value: editors.IDEA,
+          description: 'https://www.jetbrains.com/idea/',
+        },
+        {
+          name: 'NOTEPAD++',
+          value: editors.NOTEPAD,
+          description: 'https://notepad-plus-plus.org/',
+        },
+        {
+          name: 'Sublime',
+          value: editors.SUBLIME,
+          description: 'https://www.sublimetext.com/',
+        },
+        {
+          name: 'Webstorm',
+          value: editors.WEBSTORM,
+          description: 'https://www.jetbrains.com/webstorm/',
+        },
+      ],
+    });
+
+    const editor = new Editor(selectedEditor);
+
+    await editor.openFileWithEditor(selectedGeneratedFile);
+  });
 
 program
   .command('organism')
@@ -53,7 +145,7 @@ program
       );
 
       if (isNeedState) {
-        generateComponentState({
+        await generateComponentState({
           componentName,
           type,
           projectPrefix,
@@ -61,18 +153,18 @@ program
       }
 
       if (isNeedSeparatePageView) {
-        generatePageComponent({ componentName, isUsingPageStoryTemplate: isUsingPageStoryTemplate, pageDirectory: pageDirectory as string });
-        generateTemplateComponent({ componentName, templateDirectory: templateDirectory as string });
+        await generatePageComponent({ componentName, isUsingPageStoryTemplate: isUsingPageStoryTemplate, pageDirectory: pageDirectory as string });
+        await generateTemplateComponent({ componentName, templateDirectory: templateDirectory as string });
       }
 
       if (isNeedNewDataFile) {
-        generateComponentData({ componentName, dataDirectory: dataDirectory as string });
+        await generateComponentData({ componentName, dataDirectory: dataDirectory as string });
       }
 
-      generateComponentType({ componentName, type, typeDirectory: typeDirectory as string });
+      await generateComponentType({ componentName, type, typeDirectory: typeDirectory as string });
 
       if (isNeedStyle) {
-        generateComponentStyle({
+        await generateComponentStyle({
           projectPrefix,
           componentName,
           type,
@@ -83,7 +175,7 @@ program
         generateComponentScript({ componentName, scriptDirectory: scriptDirectory as string });
       }
 
-      generateComponent({
+      await generateComponent({
         projectPrefix,
         componentName,
         type,
@@ -107,10 +199,10 @@ program
 
     const { componentName, projectPrefix, isNeedState, isNeedScript, isNeedStyle } = await commonActions(getTypeFullText(type, false));
 
-    generateComponentType({ componentName, type, typeDirectory: typeDirectory as string });
+    await generateComponentType({ componentName, type, typeDirectory: typeDirectory as string });
 
     if (isNeedState) {
-      generateComponentState({
+      await generateComponentState({
         componentName,
         type,
         projectPrefix,
@@ -118,7 +210,7 @@ program
     }
 
     if (isNeedStyle) {
-      generateComponentStyle({
+      await generateComponentStyle({
         projectPrefix,
         componentName,
         type,
@@ -129,7 +221,7 @@ program
       generateComponentScript({ componentName, scriptDirectory: scriptDirectory as string });
     }
 
-    generateComponent({
+    await generateComponent({
       projectPrefix,
       componentName,
       type,
@@ -151,10 +243,10 @@ program
 
     const { componentName, projectPrefix, isNeedState, isNeedScript, isNeedStyle } = await commonActions(getTypeFullText(type, false));
 
-    generateComponentType({ componentName, type, typeDirectory: typeDirectory as string });
+    await generateComponentType({ componentName, type, typeDirectory: typeDirectory as string });
 
     if (isNeedState) {
-      generateComponentState({
+      await generateComponentState({
         componentName,
         type,
         projectPrefix,
@@ -162,7 +254,7 @@ program
     }
 
     if (isNeedStyle) {
-      generateComponentStyle({
+      await generateComponentStyle({
         projectPrefix,
         componentName,
         type,
@@ -173,7 +265,7 @@ program
       generateComponentScript({ componentName, scriptDirectory: scriptDirectory as string });
     }
 
-    generateComponent({
+    await generateComponent({
       projectPrefix,
       componentName,
       type,

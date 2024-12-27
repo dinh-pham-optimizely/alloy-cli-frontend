@@ -1,0 +1,16 @@
+<-- ${componentModelName} and other default texts like this will be replaced automatically. See the list in README. -->
+import { Story, StoryCollectionMeta } from '@_types/types';
+import { ${componentTemplateName} } from '@templates/${componentNameKebabCase}/${componentTemplateName}';
+
+export default {
+  $$name: '${componentName}',
+  $$path: '${componentNameCamelCase}',
+} as StoryCollectionMeta;
+
+export const default${componentPageName}: Story = {
+  name: '${componentAsCapCaseWithSpacing} - Default',
+  path: 'default',
+  render: () => {
+    return <${componentTemplateName} ${componentDataName}={${componentDataName}} />;
+  },
+};
