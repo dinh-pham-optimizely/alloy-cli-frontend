@@ -1,6 +1,7 @@
 <-- ${componentModelName} and other default texts like this will be replaced automatically. See the list in README. -->
 import { Story, StoryCollectionMeta } from '@_types/types';
 import { ${componentTemplateName} } from '@templates/${componentNameKebabCase}/${componentTemplateName}';
+import { ${componentDataName} } from '@data/${componentNameKebabCase}';
 
 export default {
   $$name: '${componentName}',
