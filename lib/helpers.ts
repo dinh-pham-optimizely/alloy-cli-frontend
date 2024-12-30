@@ -152,9 +152,11 @@ const replaceTemplateComments = (content: string) => content.replace(/<--.*?-->/
 
 const replaceComponentTemplatePlaceholder = (content: string, componentName: string, isNeedScript: boolean, isNeedStyle: boolean) =>
   {
+    if (!isNeedScript && !isNeedStyle) return '';
+
     const componentNameKebabCase = getComponentAsKebabCase(componentName);
 
-    return content.replace(/<-- CLI placeholder - please don\\'t make any changes -->/g, `    ${isNeedScript ?
+    return content.replace(/<-- CLI placeholder - please don't make any changes -->/g, `    ${isNeedScript ?
       `\n      <RequireJs path={'${componentNameKebabCase}'} defer />` : ''}${isNeedStyle
       ?
       `\n      <RequireCss path={'b-${componentNameKebabCase}'} />`

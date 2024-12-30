@@ -18,7 +18,7 @@ import { Editor, editors } from './lib/editor';
 
 program
   .name('Alloy CLI Frontend')
-  .version('1.0.2')
+  .version('1.1.1')
   .description('Alloy CLI to generate frontend components and more');
 
 program

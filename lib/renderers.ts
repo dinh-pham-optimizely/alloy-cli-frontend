@@ -25,7 +25,9 @@ const renderComponentContent = async ({
 
       const data = replaceComponentTextVariants(result, componentName, projectPrefix, type);
 
-      return replaceTemplateComments(replaceComponentTemplatePlaceholder(data, componentName, isNeedScript, isNeedStyle));
+      const addedPlaceholderContent = replaceComponentTemplatePlaceholder(data, componentName, isNeedScript, isNeedStyle);
+
+      return replaceTemplateComments(addedPlaceholderContent);
     } catch (error) {
       throw error;
     }
