@@ -1,7 +1,7 @@
 #! /usr/bin/env node
 
 import { program } from '@commander-js/extra-typings';
-import { confirm, select } from '@inquirer/prompts';
+import { confirm, input, select } from '@inquirer/prompts';
 import {
   generateComponent,
   generateComponentData,
@@ -272,6 +272,38 @@ program
       isNeedScript,
       componentDirectory: componentDirectory as string,
     });
+  });
+
+program
+  .command('page')
+  .option('-pd, --page-directory <string>', 'Select page directory', `pages`)
+  .option('-tpd, --template-directory <string>', 'Select template directory', `templates`)
+  .action(async (options) =>
+  {
+    const { pageDirectory, templateDirectory } = options;
+
+    const pageName = await input({
+      message: `What's page name? (Using PascalCase)`,
+      required: true,
+    });
+
+    const isUsingPageStoryTemplate = await confirm({
+      message: 'Do you want to use page\'s story template?',
+    });
+
+    const isNeedNewTemplateComponent = await confirm({
+      message: 'Do you want to add a new template component?',
+    });
+
+    await generatePageComponent({
+      componentName: pageName,
+      isUsingPageStoryTemplate: isUsingPageStoryTemplate,
+      pageDirectory: pageDirectory as string,
+    });
+
+    if (isNeedNewTemplateComponent || templateDirectory !== 'templates') {
+      await generateTemplateComponent({ componentName: pageName, templateDirectory: templateDirectory as string });
+    }
   });
 
 program.parse(process.argv);
