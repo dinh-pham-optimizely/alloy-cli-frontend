@@ -13,6 +13,7 @@ generation of scripts, styles, states, types, and other related files.
     - [Organism](#organism)
     - [Molecule](#molecule)
     - [Atom](#atom)
+    - [Page](#page)
     - [Edit Generated files](#edit-generated-files)
 - [Options](#options)
 - [Examples](#examples)
@@ -118,6 +119,29 @@ Each command accepts a set of options to configure component generation:
 | `-cd, --component-directory` | Select component directory | `atoms`          |
 | `-td, --type-directory`      | Select type directory      | `_types`         |
 | `-sd, --script-directory`    | Select script directory    | `assets/scripts` |
+
+### Page
+
+Generates a **Page** with options to add a story template and a new template component.
+
+```bash
+alloy page [options]
+```
+
+Follow the prompts to:
+
+1. Enter the page name in PascalCase format (e.g., `Home`).
+2. Decide whether to include a story template for the page.
+3. Choose whether to add a new template component or reuse an existing one.
+
+#### Options
+
+Each command accepts a set of options to configure component generation:
+
+| Option                       | Description               | Default     |
+|------------------------------|---------------------------|-------------|
+| `-pd, --page-directory`      | Select page directory     | `pages`     |
+| `-tpd, --template-directory` | Select template directory | `templates` |
 
 ### Edit Generated Files
 
