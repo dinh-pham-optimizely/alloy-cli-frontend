@@ -152,7 +152,7 @@ const replaceTemplateComments = (content: string) => content.replace(/<--.*?-->/
 
 const replaceComponentTemplatePlaceholder = (content: string, componentName: string, isNeedScript: boolean, isNeedStyle: boolean) =>
   {
-    if (!isNeedScript && !isNeedStyle) return '';
+    if (!isNeedScript && !isNeedStyle) return content;
 
     const componentNameKebabCase = getComponentAsKebabCase(componentName);
 
