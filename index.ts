@@ -18,7 +18,7 @@ import { Editor, editors } from './lib/editor';
 
 program
   .name('Alloy CLI Frontend')
-  .version('1.1.2')
+  .version('1.1.3')
   .description('Alloy CLI to generate frontend components and more');
 
 program
@@ -127,6 +127,7 @@ program
       const type: ComponentType = 'o';
 
       const { componentName, projectPrefix, isNeedState, isNeedScript, isNeedStyle } = await commonActions(getTypeFullText(type, false));
+      let isUsingPageStoryTemplate = false;
 
       const isNeedSeparatePageView = await confirm(
         {
@@ -134,9 +135,11 @@ program
         },
       );
 
-      const isUsingPageStoryTemplate = await confirm({
-        message: 'Do you want to use page\'s story template?',
-      });
+      if (isNeedSeparatePageView) {
+        isUsingPageStoryTemplate = await confirm({
+          message: 'Do you want to use page\'s story template?',
+        });
+      }
 
       const isNeedNewDataFile = await confirm(
         {
@@ -239,7 +242,7 @@ program
   {
     const { typeDirectory, scriptDirectory, componentDirectory } = options;
 
-    const type: ComponentType = 'a';
+    const type: ComponentType = 'm';
 
     const { componentName, projectPrefix, isNeedState, isNeedScript, isNeedStyle } = await commonActions(getTypeFullText(type, false));
 
