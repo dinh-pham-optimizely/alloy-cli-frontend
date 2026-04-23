@@ -1,22 +1,12 @@
 #! /usr/bin/env node
 
 import { program } from '@commander-js/extra-typings';
-import { confirm, input, select } from '@inquirer/prompts';
-import {
-  generateComponent,
-  generateComponentData,
-  generateComponentScript,
-  generateComponentState,
-  generateComponentStyle,
-  generateComponentType,
-  generatePageComponent,
-  generateTemplateComponent,
-} from './lib/generators';
-import { ComponentType } from './types';
-import { commonActions, generatedFiles, getTypeFullText } from './lib/helpers';
+import { select } from '@inquirer/prompts';
+import { generatedFiles, getTypeFullText } from './lib/helpers';
 import { Editor, editors } from './lib/editor';
 import { initAction } from './lib/init';
 import { scanModels, writeModelRegistry, REGISTRY_FILENAME } from './lib/scanner';
+import { organismAction, atomAction, moleculeAction, pageAction } from './lib/commands';
 import path from 'node:path';
 
 program
@@ -123,117 +113,17 @@ program
   .option('-dd, --data-directory <string>', 'Select data directory', `_data`)
   .option('-td, --type-directory <string>', 'Select type directory', `_types`)
   .option('-sd, --script-directory <string>', 'Select script directory', `assets/scripts`)
-  .action(async (options) =>
-    {
-      const { componentDirectory, pageDirectory, templateDirectory, dataDirectory, typeDirectory, scriptDirectory } = options;
-
-      const type: ComponentType = 'o';
-
-      const { componentName, projectPrefix, isNeedState, isNeedScript, isNeedStyle } = await commonActions(getTypeFullText(type, false));
-      let isUsingPageStoryTemplate = false;
-
-      const isNeedSeparatePageView = await confirm(
-        {
-          message: 'Do you want to create a separate page view for this organism?',
-        },
-      );
-
-      if (isNeedSeparatePageView) {
-        isUsingPageStoryTemplate = await confirm({
-          message: 'Do you want to use page\'s story template?',
-        });
-      }
-
-      const isNeedNewDataFile = await confirm(
-        {
-          message: 'Do you want to create a new data file for this organism?',
-        },
-      );
-
-      if (isNeedState) {
-        await generateComponentState({
-          componentName,
-          type,
-          projectPrefix,
-        });
-      }
-
-      if (isNeedSeparatePageView) {
-        await generatePageComponent({ componentName, isUsingPageStoryTemplate: isUsingPageStoryTemplate, pageDirectory: pageDirectory as string });
-        await generateTemplateComponent({ componentName, templateDirectory: templateDirectory as string });
-      }
-
-      if (isNeedNewDataFile) {
-        await generateComponentData({ componentName, dataDirectory: dataDirectory as string });
-      }
-
-      await generateComponentType({ componentName, type, typeDirectory: typeDirectory as string });
-
-      if (isNeedStyle) {
-        await generateComponentStyle({
-          projectPrefix,
-          componentName,
-          type,
-        });
-      }
-
-      if (isNeedScript) {
-        await generateComponentScript({ componentName, scriptDirectory: scriptDirectory as string });
-      }
-
-      await generateComponent({
-        projectPrefix,
-        componentName,
-        type,
-        isNeedScript,
-        isNeedStyle,
-        componentDirectory: componentDirectory as string,
-      });
-    },
-  );
+  .action(async (options) => {
+    await organismAction(options as Parameters<typeof organismAction>[0]);
+  });
 
 program
   .command('atom')
   .option('-cd, --component-directory <string>', 'Select component directory', `${getTypeFullText('a')}`)
   .option('-td, --type-directory <string>', 'Select type directory', `_types`)
   .option('-sd, --script-directory <string>', 'Select script directory', `assets/scripts`)
-  .action(async (options) =>
-  {
-    const { typeDirectory, scriptDirectory, componentDirectory } = options;
-
-    const type: ComponentType = 'a';
-
-    const { componentName, projectPrefix, isNeedState, isNeedScript, isNeedStyle } = await commonActions(getTypeFullText(type, false));
-
-    await generateComponentType({ componentName, type, typeDirectory: typeDirectory as string });
-
-    if (isNeedState) {
-      await generateComponentState({
-        componentName,
-        type,
-        projectPrefix,
-      });
-    }
-
-    if (isNeedStyle) {
-      await generateComponentStyle({
-        projectPrefix,
-        componentName,
-        type,
-      });
-    }
-
-    if (isNeedScript) {
-      await generateComponentScript({ componentName, scriptDirectory: scriptDirectory as string });
-    }
-
-    await generateComponent({
-      projectPrefix,
-      componentName,
-      type,
-      isNeedScript,
-      componentDirectory: componentDirectory as string,
-    });
+  .action(async (options) => {
+    await atomAction(options as Parameters<typeof atomAction>[0]);
   });
 
 program
@@ -241,75 +131,16 @@ program
   .option('-cd, --component-directory <string>', 'Select component directory', `${getTypeFullText('m')}`)
   .option('-td, --type-directory <string>', 'Select type directory', `_types`)
   .option('-sd, --script-directory <string>', 'Select script directory', `assets/scripts`)
-  .action(async (options) =>
-  {
-    const { typeDirectory, scriptDirectory, componentDirectory } = options;
-
-    const type: ComponentType = 'm';
-
-    const { componentName, projectPrefix, isNeedState, isNeedScript, isNeedStyle } = await commonActions(getTypeFullText(type, false));
-
-    await generateComponentType({ componentName, type, typeDirectory: typeDirectory as string });
-
-    if (isNeedState) {
-      await generateComponentState({
-        componentName,
-        type,
-        projectPrefix,
-      });
-    }
-
-    if (isNeedStyle) {
-      await generateComponentStyle({
-        projectPrefix,
-        componentName,
-        type,
-      });
-    }
-
-    if (isNeedScript) {
-      await generateComponentScript({ componentName, scriptDirectory: scriptDirectory as string });
-    }
-
-    await generateComponent({
-      projectPrefix,
-      componentName,
-      type,
-      isNeedScript,
-      componentDirectory: componentDirectory as string,
-    });
+  .action(async (options) => {
+    await moleculeAction(options as Parameters<typeof moleculeAction>[0]);
   });
 
 program
   .command('page')
   .option('-pd, --page-directory <string>', 'Select page directory', `pages`)
   .option('-tpd, --template-directory <string>', 'Select template directory', `templates`)
-  .action(async (options) =>
-  {
-    const { pageDirectory, templateDirectory } = options;
-
-    const pageName = await input({
-      message: `What's page name? (Using PascalCase)`,
-      required: true,
-    });
-
-    const isUsingPageStoryTemplate = await confirm({
-      message: 'Do you want to use page\'s story template?',
-    });
-
-    const isNeedNewTemplateComponent = await confirm({
-      message: 'Do you want to add a new template component?',
-    });
-
-    await generatePageComponent({
-      componentName: pageName,
-      isUsingPageStoryTemplate: isUsingPageStoryTemplate,
-      pageDirectory: pageDirectory as string,
-    });
-
-    if (isNeedNewTemplateComponent || templateDirectory !== 'templates') {
-      await generateTemplateComponent({ componentName: pageName, templateDirectory: templateDirectory as string });
-    }
+  .action(async (options) => {
+    await pageAction(options as Parameters<typeof pageAction>[0]);
   });
 
 program
