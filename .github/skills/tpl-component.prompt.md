@@ -50,37 +50,12 @@ const ${componentName} = (model: ${componentModelName}) => {
 
   return (
     <div className={styleModifier}>
-      {/* rendered properties */}
     </div>
   );
 }
 
 export default ${componentName};
 ```
-
-### Property Rendering Rules
-
-When properties are provided, render them inside the `<div>` using these rules:
-
-| Property type | Rendering | Example |
-|---|---|---|
-| `string` (named title/heading/name) | `<h2>{model.title}</h2>` | heading element |
-| `string` (named description/content/text/subtitle/caption) | `<p>{model.description}</p>` | paragraph element |
-| `string` (named label) | `<span>{model.label}</span>` | inline element |
-| `string` (named url/href/src/link) | Do not render directly | used as attribute |
-| `string` (other) | `<span>{model.propName}</span>` | generic inline |
-| `boolean` | Conditional wrapper: `{model.isVisible && (...)}` | conditional rendering |
-| `number` | `<span>{model.count}</span>` | inline element |
-| `*Model` (project type) | `<ChildComponent {...model.propName} />` | render sub-component |
-| `*[]` array | `{model.items?.map((item, index) => <div key={index}>{item}</div>)}` | mapped list |
-| `() => void` | Do not render — used as event handler | attached to elements |
-
-### Sub-component Import Rules
-
-When a property type is a project `*Model` (e.g., `ImageModel`, `ButtonModel`):
-- Import the corresponding component: derive the component name by removing `Model` suffix
-- Import path follows Atomic Design convention: `@atoms/{kebab}/{Name}`, `@molecules/{kebab}/{Name}`, or `@organisms/{kebab}/{Name}`
-- Determine the correct type directory by checking which `*.d.ts` file contains the model definition
 
 ## Conditional Modifications
 
