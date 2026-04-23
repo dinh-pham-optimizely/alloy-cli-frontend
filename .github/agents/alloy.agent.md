@@ -121,3 +121,5 @@ All templates live in `public/templates/`. Skills read these files as blueprints
 - Pass resolved properties to `#prompt:tpl-type`, `#prompt:tpl-data`, and `#prompt:tpl-component` so they populate the interface, data defaults, and JSX
 - Show resolved property types (with source: project vs inferred) in the confirmation plan
 - If no properties are mentioned, skills produce empty interfaces and data objects (backward compatible)
+- After generating a type definition, update `.alloy-models.json` by adding the new model name to the appropriate category array (`atoms`, `molecules`, or `organisms`). If the file doesn't exist, create it with the single new entry
+- NEVER grep or read `src/_types/*.d.ts` files to discover model names — always read `.alloy-models.json` instead. If it's missing, suggest `alloy-cli-frontend scan`

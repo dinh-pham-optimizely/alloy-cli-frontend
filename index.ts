@@ -16,6 +16,7 @@ import { ComponentType } from './types';
 import { commonActions, generatedFiles, getTypeFullText } from './lib/helpers';
 import { Editor, editors } from './lib/editor';
 import { initAction } from './lib/init';
+import { scanModels, writeModelRegistry, REGISTRY_FILENAME } from './lib/scanner';
 
 program
   .name('Alloy CLI Frontend')
@@ -316,6 +317,23 @@ program
   .option('-f, --force', 'Overwrite existing files')
   .action(async (options) => {
     await initAction(options);
+  });
+
+program
+  .command('scan')
+  .description('Scan project types and generate the model registry (.alloy-models.json)')
+  .option('-td, --type-directory <dir>', 'Type definitions directory', '_types')
+  .action((options) => {
+    const typesDir = path.join(process.cwd(), 'src', options.typeDirectory);
+    const registry = scanModels(typesDir);
+    writeModelRegistry(process.cwd(), registry);
+
+    const total = registry.atoms.length + registry.molecules.length + registry.organisms.length;
+    console.log(`\nFound ${total} model(s):`);
+    if (registry.atoms.length) console.log(`  Atoms:     ${registry.atoms.join(', ')}`);
+    if (registry.molecules.length) console.log(`  Molecules: ${registry.molecules.join(', ')}`);
+    if (registry.organisms.length) console.log(`  Organisms: ${registry.organisms.join(', ')}`);
+    if (total === 0) console.log('  No models found. Create components first, then re-run scan.');
   });
 
 program.parse(process.argv);
