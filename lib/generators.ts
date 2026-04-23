@@ -1,6 +1,7 @@
 import { appendContentToFile, createFile, createFolder, getComponentAsCamelCase, getComponentAsKebabCase, getTypeFullText, srcPath } from './helpers';
 import { GenerateComponent, GenerateComponentScript, GenerateData, GeneratePage, GenerateTemplate, GenerateType } from '../types';
 import path from 'node:path';
+import { updateModelRegistry } from './scanner';
 import {
   renderComponentContent,
   renderComponentData,
@@ -103,6 +104,8 @@ const generateComponentType = async (
     createFolder(folderPath);
 
     appendContentToFile(filePath, content);
+
+    updateModelRegistry(process.cwd(), componentName, type);
   };
 
 const generateComponentStyle = async ({ componentName, projectPrefix, type }: GenerateComponent) =>

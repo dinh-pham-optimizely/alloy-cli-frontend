@@ -17,6 +17,7 @@ It also ships with a **GitHub Copilot agent** (`@alloy`) and a set of skills tha
     - [Atom](#atom)
     - [Page](#page)
     - [Init](#init)
+    - [Scan](#scan)
     - [Edit Generated files](#edit-generated-files)
 - [Copilot Agent & Skills](#copilot-agent--skills)
     - [What You Get](#what-you-get)
@@ -171,6 +172,32 @@ Existing files are skipped by default. Use `--force` to overwrite:
 ```bash
 alloy-cli-frontend init --force
 ```
+
+### Scan
+
+Scans your project's type definition files (`src/_types/*.d.ts`) and generates a **model registry** (`.alloy-models.json`) at the project root. The Copilot `@alloy` agent reads this compact registry to resolve property types instantly — instead of grepping through large `.d.ts` files on every invocation.
+
+```bash
+alloy-cli-frontend scan
+```
+
+The registry maps model names to their Atomic Design category:
+
+```json
+{
+  "atoms": ["ButtonModel", "ImageModel"],
+  "molecules": ["SearchBarModel"],
+  "organisms": ["HeaderModel", "ProductCardModel"]
+}
+```
+
+The registry is also **auto-updated** every time you generate a component via the CLI, so you typically only need to run `scan` once to bootstrap from existing types.
+
+#### Options
+
+| Option                    | Description                   | Default  |
+|---------------------------|-------------------------------|----------|
+| `-td, --type-directory`   | Type definitions directory    | `_types` |
 
 ### Edit Generated Files
 
