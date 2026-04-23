@@ -66,7 +66,7 @@ All component names must be **PascalCase** (e.g., `ProductCard`, `SearchBar`).
 
 ## Template Placeholder System
 
-Templates in `public/templates/` use `${variableName}` placeholders that get replaced during generation:
+Templates in `.github/skills/tpl-**.prompt.md` use `${variableName}` placeholders that get replaced during generation:
 
 | Placeholder | Replacement |
 |------------|-------------|
@@ -83,15 +83,15 @@ Templates in `public/templates/` use `${variableName}` placeholders that get rep
 
 ## Template Files Reference
 
-Located in `public/templates/`:
-- `component.txt` — React component with imports, model type, style modifier, and CLI placeholder for RequireJs/RequireCss
-- `template.txt` — Template wrapper that imports and renders an organism
-- `page.txt` — Standard page importing data and template
-- `page-story.txt` — Story collection page with metadata and render function
-- `data.txt` — Data/props object typed with component model
-- `state.txt` — JSON state config with selector, button config, and states array
-- `style.txt` — SCSS file with class selector
-- `type.txt` — TypeScript interface extending `BasedAtomicModel`
+Located in `.github/skills/`:
+- `tpl-component.prompt.md` — React component with imports, model type, style modifier, and CLI placeholder for RequireJs/RequireCss
+- `tpl-template.prompt.md` — Template wrapper that imports and renders an organism
+- `tpl-page.prompt.md` — Standard page importing data and template
+- `tpl-page-story.prompt.md` — Story collection page with metadata and render function
+- `tpl-data.prompt.md` — Data/props object typed with component model
+- `tpl-state.prompt.md` — JSON state config with selector, button config, and states array
+- `tpl-style.prompt.md` — SCSS file with class selector
+- `tpl-type.prompt.md` — TypeScript interface extending `BasedAtomicModel`
 
 ## Import Aliases
 

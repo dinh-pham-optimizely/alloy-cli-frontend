@@ -94,9 +94,7 @@ When generating files, apply these transformations to the PascalCase component n
 
 ## Template Files
 
-All templates live in `public/templates/`. Skills read these files as blueprints:
-- `component.txt`, `template.txt`, `page.txt`, `page-story.txt`
-- `data.txt`, `state.txt`, `style.txt`, `type.txt`
+All templates live in `.github/skills/`. Skills read these files as blueprints: `tpl-**.prompt.md`
 
 ## Handling Ambiguous Requests
 
