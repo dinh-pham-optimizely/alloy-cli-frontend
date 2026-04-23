@@ -1,0 +1,6 @@
+<-- ${componentModelName} and other default texts like this will be replaced automatically. See the list in README. -->
+import { ${componentModelName} } from '@_types/types';
+
+const ${componentDataName}: ${componentModelName} = {};
+
+export { ${componentDataName} };

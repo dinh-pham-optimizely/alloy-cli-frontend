@@ -1,0 +1,16 @@
+<-- ${componentModelName} and other default texts like this will be replaced automatically. See the list in README. -->
+import { ${componentModelName} } from '@_types/types';
+import { getModifiers } from '@helpers/functions';
+
+const ${componentName} = (model: ${componentModelName}) => {
+  const styleModifier = getModifiers(model, '${projectPrefix}-${type}-${componentNameKebabCase}');
+
+  return (
+    <div className={styleModifier}>
+
+    <-- CLI placeholder - please don't make any changes -->
+    </div>
+  );
+}
+
+export default ${componentName};
