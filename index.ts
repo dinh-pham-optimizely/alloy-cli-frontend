@@ -15,6 +15,7 @@ import {
 import { ComponentType } from './types';
 import { commonActions, generatedFiles, getTypeFullText } from './lib/helpers';
 import { Editor, editors } from './lib/editor';
+import { initAction } from './lib/init';
 
 program
   .name('Alloy CLI Frontend')
@@ -175,7 +176,7 @@ program
       }
 
       if (isNeedScript) {
-        generateComponentScript({ componentName, scriptDirectory: scriptDirectory as string });
+        await generateComponentScript({ componentName, scriptDirectory: scriptDirectory as string });
       }
 
       await generateComponent({
@@ -221,7 +222,7 @@ program
     }
 
     if (isNeedScript) {
-      generateComponentScript({ componentName, scriptDirectory: scriptDirectory as string });
+      await generateComponentScript({ componentName, scriptDirectory: scriptDirectory as string });
     }
 
     await generateComponent({
@@ -265,7 +266,7 @@ program
     }
 
     if (isNeedScript) {
-      generateComponentScript({ componentName, scriptDirectory: scriptDirectory as string });
+      await generateComponentScript({ componentName, scriptDirectory: scriptDirectory as string });
     }
 
     await generateComponent({
@@ -307,6 +308,14 @@ program
     if (isNeedNewTemplateComponent || templateDirectory !== 'templates') {
       await generateTemplateComponent({ componentName: pageName, templateDirectory: templateDirectory as string });
     }
+  });
+
+program
+  .command('init')
+  .description('Install Copilot agent and skills into your project')
+  .option('-f, --force', 'Overwrite existing files')
+  .action(async (options) => {
+    await initAction(options);
   });
 
 program.parse(process.argv);

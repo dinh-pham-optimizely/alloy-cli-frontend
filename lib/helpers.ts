@@ -61,6 +61,12 @@ const commonActions = async (type: string) =>
     const componentName = await input({
       message: `What's ${type} name? (Using PascalCase)`,
       required: true,
+      validate: (value: string) => {
+        if (!/^[A-Z][a-zA-Z0-9]*$/.test(value)) {
+          return 'Component name must be PascalCase (e.g., ProductCard, Button). Start with an uppercase letter, no spaces, hyphens, or underscores.';
+        }
+        return true;
+      },
     });
 
 

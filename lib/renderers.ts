@@ -29,7 +29,7 @@ const renderComponentContent = async ({
 
       return replaceTemplateComments(addedPlaceholderContent);
     } catch (error) {
-      throw error;
+      throw new Error(`Failed to render component "${componentName}": ${(error as Error).message}`);
     }
   };
 
@@ -43,7 +43,7 @@ const renderTemplateComponent = async ({ componentName }: GenerateTemplate) =>
       return replaceTemplateComments(data);
 
     } catch (error) {
-      throw error;
+      throw new Error(`Failed to render template for "${componentName}": ${(error as Error).message}`);
     }
   };
 
@@ -60,7 +60,7 @@ const renderPageComponent = async ({ componentName, isUsingPageStoryTemplate }: 
       return replaceTemplateComments(data);
 
     } catch (error) {
-      throw error;
+      throw new Error(`Failed to render page for "${componentName}": ${(error as Error).message}`);
     }
   };
 
@@ -72,7 +72,7 @@ const renderComponentData = async ({ componentName }: GenerateData) =>
       return replaceTemplateComments(data);
 
     } catch (error) {
-      throw error;
+      throw new Error(`Failed to render data for "${componentName}": ${(error as Error).message}`);
     }
   };
 
@@ -83,7 +83,7 @@ const renderComponentType = async ({ componentName }: GenerateType) =>
       const data = replaceComponentTextVariants(result, componentName);
       return replaceTemplateComments(data);
     } catch (error) {
-      throw error;
+      throw new Error(`Failed to render type for "${componentName}": ${(error as Error).message}`);
     }
   };
 
@@ -97,7 +97,7 @@ const renderComponentStyle = async (
 
       return replaceTemplateComments(data);
     } catch (error) {
-      throw error;
+      throw new Error(`Failed to render style for "${componentName}": ${(error as Error).message}`);
     }
   };
 
@@ -109,7 +109,7 @@ const renderComponentState = async ({ componentName, projectPrefix, type }: Gene
 
       return replaceTemplateComments(data);
     } catch (error) {
-      throw error;
+      throw new Error(`Failed to render state for "${componentName}": ${(error as Error).message}`);
     }
   };
 

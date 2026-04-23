@@ -10,7 +10,8 @@
   },
   "bugs": "https://github.com/dinh-pham-optimizely/alloy-cli-frontend/issues",
   "files": [
-    "dist"
+    "dist",
+    ".github"
   ],
   "bin": {
     "alloy-cli-frontend": "./dist/index.cjs"
