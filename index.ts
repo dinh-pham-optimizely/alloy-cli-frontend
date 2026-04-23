@@ -17,6 +17,7 @@ import { commonActions, generatedFiles, getTypeFullText } from './lib/helpers';
 import { Editor, editors } from './lib/editor';
 import { initAction } from './lib/init';
 import { scanModels, writeModelRegistry, REGISTRY_FILENAME } from './lib/scanner';
+import path from 'node:path';
 
 program
   .name('Alloy CLI Frontend')
