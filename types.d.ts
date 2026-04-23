@@ -25,4 +25,35 @@ type GenerateType = {
   type: ComponentType;
 } & Component;
 
-export { GenerateComponent, GenerateTemplate, GeneratePage, GenerateData, GenerateType, ComponentType, GenerateComponentScript }
+type GenerationConfig = {
+  componentName: string;
+  type: ComponentType;
+  projectPrefix: string;
+  style?: boolean;
+  script?: boolean;
+  state?: boolean;
+  page?: boolean;
+  story?: boolean;
+  data?: boolean;
+  properties?: Array<{ name: string; type: string }>;
+  compose?: string[];
+  componentDirectory?: string;
+  pageDirectory?: string;
+  templateDirectory?: string;
+  dataDirectory?: string;
+  typeDirectory?: string;
+  scriptDirectory?: string;
+};
+
+type FileResult = {
+  path: string;
+  action: 'created' | 'appended' | 'skipped';
+};
+
+type GenerationResult = {
+  componentName: string;
+  type: ComponentType;
+  files: FileResult[];
+};
+
+export { GenerateComponent, GenerateTemplate, GeneratePage, GenerateData, GenerateType, ComponentType, GenerateComponentScript, GenerationConfig, GenerationResult, FileResult }

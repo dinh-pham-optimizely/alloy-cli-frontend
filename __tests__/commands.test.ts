@@ -2,14 +2,14 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // Mock all generators — capture calls without touching filesystem
 vi.mock('../lib/generators', () => ({
-  generateComponent: vi.fn().mockResolvedValue(undefined),
-  generateTemplateComponent: vi.fn().mockResolvedValue(undefined),
-  generatePageComponent: vi.fn().mockResolvedValue(undefined),
-  generateComponentData: vi.fn().mockResolvedValue(undefined),
-  generateComponentType: vi.fn().mockResolvedValue(undefined),
-  generateComponentStyle: vi.fn().mockResolvedValue(undefined),
-  generateComponentScript: vi.fn(),
-  generateComponentState: vi.fn().mockResolvedValue(undefined),
+  generateComponent: vi.fn().mockResolvedValue({ path: '/mock/component.tsx', action: 'created' }),
+  generateTemplateComponent: vi.fn().mockResolvedValue({ path: '/mock/template.tsx', action: 'created' }),
+  generatePageComponent: vi.fn().mockResolvedValue({ path: '/mock/page.tsx', action: 'created' }),
+  generateComponentData: vi.fn().mockResolvedValue({ path: '/mock/data.ts', action: 'created' }),
+  generateComponentType: vi.fn().mockResolvedValue({ path: '/mock/type.d.ts', action: 'appended' }),
+  generateComponentStyle: vi.fn().mockResolvedValue({ path: '/mock/style.scss', action: 'created' }),
+  generateComponentScript: vi.fn().mockReturnValue({ path: '/mock/script.entry.ts', action: 'created' }),
+  generateComponentState: vi.fn().mockResolvedValue({ path: '/mock/state.json', action: 'created' }),
 }));
 
 // Mock inquirer prompts — simulate user input
@@ -179,10 +179,8 @@ describe('atom command', () => {
     expect(callOrder[callOrder.length - 1]).toBe('component');
   });
 
-  // BUG #1: atom command does NOT pass isNeedStyle to generateComponent.
-  // Expected correct behavior: isNeedStyle should be passed so RequireCss import is generated.
-  // This test asserts the correct behavior and FAILS against the buggy code.
-  it.fails('should pass isNeedStyle to generateComponent', async () => {
+  // BUG #1 (FIXED by orchestrator): atom command now correctly passes isNeedStyle to generateComponent.
+  it('should pass isNeedStyle to generateComponent', async () => {
     vi.mocked(commonActions).mockResolvedValue({
       projectPrefix: 'ab',
       componentName: 'Button',
@@ -237,8 +235,8 @@ describe('molecule command', () => {
     expect(callOrder[callOrder.length - 1]).toBe('component');
   });
 
-  // BUG #1: molecule command does NOT pass isNeedStyle to generateComponent (same as atom).
-  it.fails('should pass isNeedStyle to generateComponent', async () => {
+  // BUG #1 (FIXED by orchestrator): molecule command now correctly passes isNeedStyle to generateComponent.
+  it('should pass isNeedStyle to generateComponent', async () => {
     vi.mocked(commonActions).mockResolvedValue({
       projectPrefix: 'xx',
       componentName: 'SearchBar',

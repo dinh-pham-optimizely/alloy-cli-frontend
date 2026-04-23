@@ -1,16 +1,11 @@
 import { confirm, input } from '@inquirer/prompts';
 import {
-  generateComponent,
-  generateComponentData,
-  generateComponentScript,
-  generateComponentState,
-  generateComponentStyle,
-  generateComponentType,
   generatePageComponent,
   generateTemplateComponent,
 } from './generators';
 import { ComponentType } from '../types';
 import { commonActions, getTypeFullText } from './helpers';
+import { executeGeneration } from './orchestrator';
 
 const organismAction = async (options: {
   componentDirectory: string;
@@ -45,44 +40,22 @@ const organismAction = async (options: {
     },
   );
 
-  if (isNeedState) {
-    await generateComponentState({
-      componentName,
-      type,
-      projectPrefix,
-    });
-  }
-
-  if (isNeedSeparatePageView) {
-    await generatePageComponent({ componentName, isUsingPageStoryTemplate: isUsingPageStoryTemplate, pageDirectory: pageDirectory as string });
-    await generateTemplateComponent({ componentName, templateDirectory: templateDirectory as string });
-  }
-
-  if (isNeedNewDataFile) {
-    await generateComponentData({ componentName, dataDirectory: dataDirectory as string });
-  }
-
-  await generateComponentType({ componentName, type, typeDirectory: typeDirectory as string });
-
-  if (isNeedStyle) {
-    await generateComponentStyle({
-      projectPrefix,
-      componentName,
-      type,
-    });
-  }
-
-  if (isNeedScript) {
-    await generateComponentScript({ componentName, scriptDirectory: scriptDirectory as string });
-  }
-
-  await generateComponent({
-    projectPrefix,
+  await executeGeneration({
     componentName,
     type,
-    isNeedScript,
-    isNeedStyle,
-    componentDirectory: componentDirectory as string,
+    projectPrefix,
+    style: isNeedStyle,
+    script: isNeedScript,
+    state: isNeedState,
+    page: isNeedSeparatePageView,
+    story: isUsingPageStoryTemplate,
+    data: isNeedNewDataFile,
+    componentDirectory,
+    pageDirectory,
+    templateDirectory,
+    dataDirectory,
+    typeDirectory,
+    scriptDirectory,
   });
 };
 
@@ -97,34 +70,16 @@ const atomAction = async (options: {
 
   const { componentName, projectPrefix, isNeedState, isNeedScript, isNeedStyle } = await commonActions(getTypeFullText(type, false));
 
-  await generateComponentType({ componentName, type, typeDirectory: typeDirectory as string });
-
-  if (isNeedState) {
-    await generateComponentState({
-      componentName,
-      type,
-      projectPrefix,
-    });
-  }
-
-  if (isNeedStyle) {
-    await generateComponentStyle({
-      projectPrefix,
-      componentName,
-      type,
-    });
-  }
-
-  if (isNeedScript) {
-    await generateComponentScript({ componentName, scriptDirectory: scriptDirectory as string });
-  }
-
-  await generateComponent({
-    projectPrefix,
+  await executeGeneration({
     componentName,
     type,
-    isNeedScript,
-    componentDirectory: componentDirectory as string,
+    projectPrefix,
+    style: isNeedStyle,
+    script: isNeedScript,
+    state: isNeedState,
+    componentDirectory,
+    typeDirectory,
+    scriptDirectory,
   });
 };
 
@@ -139,34 +94,16 @@ const moleculeAction = async (options: {
 
   const { componentName, projectPrefix, isNeedState, isNeedScript, isNeedStyle } = await commonActions(getTypeFullText(type, false));
 
-  await generateComponentType({ componentName, type, typeDirectory: typeDirectory as string });
-
-  if (isNeedState) {
-    await generateComponentState({
-      componentName,
-      type,
-      projectPrefix,
-    });
-  }
-
-  if (isNeedStyle) {
-    await generateComponentStyle({
-      projectPrefix,
-      componentName,
-      type,
-    });
-  }
-
-  if (isNeedScript) {
-    await generateComponentScript({ componentName, scriptDirectory: scriptDirectory as string });
-  }
-
-  await generateComponent({
-    projectPrefix,
+  await executeGeneration({
     componentName,
     type,
-    isNeedScript,
-    componentDirectory: componentDirectory as string,
+    projectPrefix,
+    style: isNeedStyle,
+    script: isNeedScript,
+    state: isNeedState,
+    componentDirectory,
+    typeDirectory,
+    scriptDirectory,
   });
 };
 

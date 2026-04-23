@@ -6,6 +6,8 @@ import {
   replaceComponentTextVariants,
   replaceTemplateComments,
 } from './helpers';
+import { getDefaultValue } from './resolver';
+import { CompositionResult } from './composer';
 import fs from 'node:fs/promises';
 
 const renderComponentContent = async ({
@@ -14,18 +16,37 @@ const renderComponentContent = async ({
   type,
   isNeedScript,
   isNeedStyle,
-}: GenerateComponent) =>
+}: GenerateComponent, composition?: CompositionResult) =>
   {
     try {
       let result = await fs.readFile(getTemplatePath(`${generatedFiles.COMPONENT}.txt`), 'utf-8');
 
-      result = `${isNeedScript ? `import RequireJs from '@helpers/RequireJs';` : ''}${isNeedStyle
-        ? `\nimport RequireCss from '@helpers/RequireCss';`
-        : ''}`.concat(result);
+      let extraImports = '';
+      if (isNeedScript) extraImports += `import RequireJs from '@helpers/RequireJs';`;
+      if (isNeedStyle) extraImports += `\nimport RequireCss from '@helpers/RequireCss';`;
+      if (composition && composition.imports.length > 0) {
+        extraImports += (extraImports ? '\n' : '') + composition.imports.join('\n');
+      }
+
+      result = extraImports.concat(result);
 
       const data = replaceComponentTextVariants(result, componentName, projectPrefix, type);
 
-      const addedPlaceholderContent = replaceComponentTemplatePlaceholder(data, componentName, isNeedScript, isNeedStyle);
+      let addedPlaceholderContent = replaceComponentTemplatePlaceholder(data, componentName, isNeedScript, isNeedStyle);
+
+      // Inject composed children JSX before the closing </div>
+      if (composition && composition.jsxPlaceholders.length > 0) {
+        const jsxBlock = '\n' + composition.jsxPlaceholders.join('\n') + '\n';
+        // Insert before the last closing </div>
+        const lastDivIndex = addedPlaceholderContent.lastIndexOf('</div>');
+        if (lastDivIndex !== -1) {
+          addedPlaceholderContent =
+            addedPlaceholderContent.slice(0, lastDivIndex) +
+            jsxBlock +
+            '    ' +
+            addedPlaceholderContent.slice(lastDivIndex);
+        }
+      }
 
       return replaceTemplateComments(addedPlaceholderContent);
     } catch (error) {
@@ -64,24 +85,38 @@ const renderPageComponent = async ({ componentName, isUsingPageStoryTemplate }: 
     }
   };
 
-const renderComponentData = async ({ componentName }: GenerateData) =>
+const renderComponentData = async ({ componentName }: GenerateData, properties?: Array<{ name: string; type: string }>) =>
   {
     try {
       let result = await fs.readFile(getTemplatePath(`${generatedFiles.DATA}.txt`), 'utf-8');
       const data = replaceComponentTextVariants(result, componentName);
-      return replaceTemplateComments(data);
+      let rendered = replaceTemplateComments(data);
+
+      if (properties && properties.length > 0) {
+        const propLines = properties.map((p) => `  ${p.name}: ${getDefaultValue(p.type)},`).join('\n');
+        rendered = rendered.replace(/= \{\};/, `= {\n${propLines}\n};`);
+      }
+
+      return rendered;
 
     } catch (error) {
       throw new Error(`Failed to render data for "${componentName}": ${(error as Error).message}`);
     }
   };
 
-const renderComponentType = async ({ componentName }: GenerateType) =>
+const renderComponentType = async ({ componentName }: GenerateType, properties?: Array<{ name: string; type: string }>) =>
   {
     try {
       let result = await fs.readFile(getTemplatePath(`${generatedFiles.TYPE}.txt`), 'utf-8');
       const data = replaceComponentTextVariants(result, componentName);
-      return replaceTemplateComments(data);
+      let rendered = replaceTemplateComments(data);
+
+      if (properties && properties.length > 0) {
+        const propLines = properties.map((p) => `  ${p.name}?: ${p.type};`).join('\n');
+        rendered = rendered.replace(/\{\s*\}/, `{\n${propLines}\n}`);
+      }
+
+      return rendered;
     } catch (error) {
       throw new Error(`Failed to render type for "${componentName}": ${(error as Error).message}`);
     }

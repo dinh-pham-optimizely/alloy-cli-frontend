@@ -95,7 +95,7 @@ describe('generateComponent', () => {
       type: 'a',
       isNeedScript: true,
       isNeedStyle: true,
-    });
+    }, undefined);
   });
 
   it('does not create file when render returns empty', async () => {

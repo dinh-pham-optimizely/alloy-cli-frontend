@@ -97,22 +97,26 @@ const createFolder = (folderPath: string) =>
     }
   };
 
-const createFile = (filePath: string, content: string) =>
+const createFile = (filePath: string, content: string): 'created' | 'skipped' =>
   {
     if (!fs.existsSync(filePath)) {
       // Write the file with the multi-line text content
       fs.writeFileSync(filePath, content, 'utf8');
       console.log(`File created with content at: ${filePath}`);
+      return 'created';
     }
+    return 'skipped';
   };
 
-const appendContentToFile = (filePath: string, content: string) =>
+const appendContentToFile = (filePath: string, content: string): 'appended' | 'skipped' =>
   {
     if (filePath) {
       // Write the file with the multi-line text content
       fs.appendFileSync(filePath, content, 'utf8');
       console.log(`Content was appended to file at: ${filePath}`);
+      return 'appended';
     }
+    return 'skipped';
   };
 
 const getTemplatePath = (fileName: string) =>

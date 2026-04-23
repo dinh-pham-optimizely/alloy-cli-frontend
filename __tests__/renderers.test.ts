@@ -240,3 +240,96 @@ describe('renderComponentState', () => {
     expect(parsed.selector).toBe('.ab-a-button');
   });
 });
+
+// ─── renderComponentType with properties ─────────────────────────────────────
+
+describe('renderComponentType with properties', () => {
+  it('injects properties into interface body', async () => {
+    const props = [
+      { name: 'title', type: 'string' },
+      { name: 'image', type: 'ImageModel' },
+    ];
+    const result = await renderComponentType({ componentName: 'Hero', type: 'o' }, props);
+
+    expect(result).toContain('interface HeroModel extends BasedAtomicModel {');
+    expect(result).toContain('  title?: string;');
+    expect(result).toContain('  image?: ImageModel;');
+  });
+
+  it('renders empty interface when no properties given', async () => {
+    const result = await renderComponentType({ componentName: 'Hero', type: 'o' });
+
+    expect(result).toContain('interface HeroModel extends BasedAtomicModel {');
+    expect(result).toContain('}');
+    expect(result).not.toContain('?:');
+  });
+});
+
+// ─── renderComponentData with properties ─────────────────────────────────────
+
+describe('renderComponentData with properties', () => {
+  it('injects property defaults into data object', async () => {
+    const props = [
+      { name: 'title', type: 'string' },
+      { name: 'count', type: 'number' },
+      { name: 'isVisible', type: 'boolean' },
+      { name: 'image', type: 'ImageModel' },
+    ];
+    const result = await renderComponentData({ componentName: 'Hero' }, props);
+
+    expect(result).toContain("title: '',");
+    expect(result).toContain('count: 0,');
+    expect(result).toContain('isVisible: false,');
+    expect(result).toContain('image: {},');
+  });
+
+  it('renders empty data object when no properties given', async () => {
+    const result = await renderComponentData({ componentName: 'Hero' });
+
+    expect(result).toContain('const heroData: HeroModel = {};');
+  });
+});
+
+// ─── renderComponentContent with composition ─────────────────────────────────
+
+describe('renderComponentContent with composition', () => {
+  it('injects composed child imports and JSX', async () => {
+    const composition = {
+      children: [],
+      imports: [
+        "import Button from '@atoms/button/Button';",
+        "import Image from '@atoms/image/Image';",
+      ],
+      jsxPlaceholders: [
+        '      <Button {...({} as ButtonModel)} />',
+        '      <Image {...({} as ImageModel)} />',
+      ],
+    };
+
+    const result = await renderComponentContent({
+      componentName: 'Hero',
+      projectPrefix: 'xx',
+      type: 'o',
+      isNeedScript: false,
+      isNeedStyle: false,
+    }, composition);
+
+    expect(result).toContain("import Button from '@atoms/button/Button';");
+    expect(result).toContain("import Image from '@atoms/image/Image';");
+    expect(result).toContain('<Button {...({} as ButtonModel)} />');
+    expect(result).toContain('<Image {...({} as ImageModel)} />');
+  });
+
+  it('renders normally when no composition provided', async () => {
+    const result = await renderComponentContent({
+      componentName: 'Hero',
+      projectPrefix: 'xx',
+      type: 'o',
+      isNeedScript: false,
+      isNeedStyle: false,
+    });
+
+    expect(result).not.toContain('@atoms');
+    expect(result).toContain('const Hero = (model: HeroModel)');
+  });
+});

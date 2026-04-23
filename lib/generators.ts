@@ -1,5 +1,5 @@
 import { appendContentToFile, createFile, createFolder, getComponentAsCamelCase, getComponentAsKebabCase, getTypeFullText, srcPath } from './helpers';
-import { GenerateComponent, GenerateComponentScript, GenerateData, GeneratePage, GenerateTemplate, GenerateType } from '../types';
+import { GenerateComponent, GenerateComponentScript, GenerateData, GeneratePage, GenerateTemplate, GenerateType, FileResult } from '../types';
 import path from 'node:path';
 import { updateModelRegistry } from './scanner';
 import {
@@ -11,6 +11,7 @@ import {
   renderPageComponent,
   renderTemplateComponent,
 } from './renderers';
+import { CompositionResult } from './composer';
 
 const generateComponent = async ({
   componentName,
@@ -19,7 +20,8 @@ const generateComponent = async ({
   isNeedStyle,
   isNeedScript,
   componentDirectory,
-}: { componentDirectory: string } & GenerateComponent) =>
+  composition,
+}: { componentDirectory: string; composition?: CompositionResult } & GenerateComponent): Promise<FileResult | null> =>
   {
     const folderPath = path.join(srcPath, `${componentDirectory}/${getComponentAsKebabCase(componentName)}`);
     const filePath = path.join(folderPath, `${componentName}.tsx`);
@@ -30,16 +32,17 @@ const generateComponent = async ({
       type,
       isNeedScript,
       isNeedStyle,
-    });
+    }, composition);
 
-    if (!content) return;
+    if (!content) return null;
 
     createFolder(folderPath);
 
-    createFile(filePath, content);
+    const action = createFile(filePath, content);
+    return { path: filePath, action };
   };
 
-const generateTemplateComponent = async ({ componentName, templateDirectory }: { templateDirectory: string } & GenerateTemplate) =>
+const generateTemplateComponent = async ({ componentName, templateDirectory }: { templateDirectory: string } & GenerateTemplate): Promise<FileResult> =>
   {
     const folderPath = path.join(srcPath, `${templateDirectory}/${getComponentAsKebabCase(componentName)}`);
     const filePath = path.join(folderPath, `${componentName}Template.tsx`);
@@ -50,10 +53,11 @@ const generateTemplateComponent = async ({ componentName, templateDirectory }: {
 
     createFolder(folderPath);
 
-    createFile(filePath, content);
+    const action = createFile(filePath, content);
+    return { path: filePath, action };
   };
 
-const generatePageComponent = async ({ componentName, isUsingPageStoryTemplate, pageDirectory }: { pageDirectory: string } & GeneratePage) =>
+const generatePageComponent = async ({ componentName, isUsingPageStoryTemplate, pageDirectory }: { pageDirectory: string } & GeneratePage): Promise<FileResult> =>
   {
     const folderPath = path.join(srcPath, `${pageDirectory}`);
     const filePath = path.join(folderPath, `${componentName}Page.tsx`);
@@ -65,50 +69,42 @@ const generatePageComponent = async ({ componentName, isUsingPageStoryTemplate, 
 
     createFolder(folderPath);
 
-    createFile(filePath, content);
+    const action = createFile(filePath, content);
+    return { path: filePath, action };
   };
 
-const generateComponentData = async ({ componentName, dataDirectory }: { dataDirectory: string } & GenerateData) =>
+const generateComponentData = async ({ componentName, dataDirectory, properties }: { dataDirectory: string; properties?: Array<{ name: string; type: string }> } & GenerateData): Promise<FileResult> =>
   {
     const folderPath = path.join(srcPath, `${dataDirectory}`);
     const filePath = path.join(folderPath, `${getComponentAsCamelCase(componentName)}.ts`);
 
-    const content = await renderComponentData({ componentName });
+    const content = await renderComponentData({ componentName }, properties);
 
     createFolder(folderPath);
 
-    createFile(filePath, content);
+    const action = createFile(filePath, content);
+    return { path: filePath, action };
   };
 
 const generateComponentType = async (
-  { type, componentName, typeDirectory }: { typeDirectory: string } & GenerateType,
-) =>
+  { type, componentName, typeDirectory, properties }: { typeDirectory: string; properties?: Array<{ name: string; type: string }> } & GenerateType,
+): Promise<FileResult> =>
   {
     const folderPath = path.join(srcPath, `${typeDirectory}`);
-    let filePath = '';
-    const content = await renderComponentType({ componentName, type });
+    const content = await renderComponentType({ componentName, type }, properties);
     const typeFullText = getTypeFullText(type);
-
-    switch (type) {
-      case 'a':
-        filePath = path.join(folderPath, `${typeFullText}.d.ts`);
-        break;
-      case 'o':
-        filePath = path.join(folderPath, `${typeFullText}.d.ts`);
-        break;
-      case 'm':
-        filePath = path.join(folderPath, `${typeFullText}.d.ts`);
-        break;
-    }
+    const filePath = path.join(folderPath, `${typeFullText}.d.ts`);
 
     createFolder(folderPath);
 
-    appendContentToFile(filePath, content);
+    const action = appendContentToFile(filePath, content);
 
     updateModelRegistry(process.cwd(), componentName, type);
+
+    return { path: filePath, action };
   };
 
-const generateComponentStyle = async ({ componentName, projectPrefix, type }: GenerateComponent) =>
+const generateComponentStyle = async ({ componentName, projectPrefix, type }: GenerateComponent): Promise<FileResult> =>
   {
     const folderPath = path.join(srcPath, `${getTypeFullText(type)}/${getComponentAsKebabCase(componentName)}`);
     const filePath = path.join(folderPath, `${componentName}.scss`);
@@ -121,22 +117,24 @@ const generateComponentStyle = async ({ componentName, projectPrefix, type }: Ge
 
     createFolder(folderPath);
 
-    createFile(filePath, content);
+    const action = createFile(filePath, content);
+    return { path: filePath, action };
   };
 
-const generateComponentScript = ({ componentName, scriptDirectory }: { scriptDirectory: string } & GenerateComponentScript) =>
+const generateComponentScript = ({ componentName, scriptDirectory }: { scriptDirectory: string } & GenerateComponentScript): FileResult =>
   {
     const folderPath = path.join(srcPath, `${scriptDirectory}`);
     const filePath = path.join(folderPath, `${getComponentAsKebabCase(componentName)}.entry.ts`);
 
     createFolder(folderPath);
 
-    createFile(filePath, '');
+    const action = createFile(filePath, '');
+    return { path: filePath, action };
   };
 
 const generateComponentState = async (
   { componentName, projectPrefix, type }: GenerateComponent,
-) =>
+): Promise<FileResult> =>
   {
     const folderPath = path.join(srcPath, `${getTypeFullText(type)}/${getComponentAsKebabCase(componentName)}`);
     const filePath = path.join(folderPath, `${componentName}.states.json`);
@@ -149,7 +147,8 @@ const generateComponentState = async (
 
     createFolder(folderPath);
 
-    createFile(filePath, content);
+    const action = createFile(filePath, content);
+    return { path: filePath, action };
   };
 
 export {

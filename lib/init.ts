@@ -36,27 +36,28 @@ const categories: FileCategory[] = [
     ],
   },
   {
-    name: 'Generation Skills',
-    description: 'Skills for generating atoms, molecules, organisms, and pages',
+    name: 'Generate Component Skill',
+    description: 'Skill for generating atoms, molecules, and organisms via CLI',
     files: [
-      { src: 'skills/generate-atom.prompt.md', dest: '.github/skills/generate-atom.prompt.md' },
-      { src: 'skills/generate-molecule.prompt.md', dest: '.github/skills/generate-molecule.prompt.md' },
-      { src: 'skills/generate-organism.prompt.md', dest: '.github/skills/generate-organism.prompt.md' },
-      { src: 'skills/generate-page.prompt.md', dest: '.github/skills/generate-page.prompt.md' },
+      { src: 'skills/generate-component/SKILL.md', dest: '.github/skills/generate-component/SKILL.md' },
+      { src: 'skills/generate-component/scripts/generate.js', dest: '.github/skills/generate-component/scripts/generate.js' },
+      { src: 'skills/generate-component/references/naming-conventions.md', dest: '.github/skills/generate-component/references/naming-conventions.md' },
+      { src: 'skills/generate-component/references/file-structure.md', dest: '.github/skills/generate-component/references/file-structure.md' },
     ],
   },
   {
-    name: 'Template Skills',
-    description: 'Template blueprints for component, wrapper, page, data, state, style, and type files',
+    name: 'Scan Models Skill',
+    description: 'Skill for scanning type definitions and updating the model registry',
     files: [
-      { src: 'skills/tpl-component.prompt.md', dest: '.github/skills/tpl-component.prompt.md' },
-      { src: 'skills/tpl-wrapper.prompt.md', dest: '.github/skills/tpl-wrapper.prompt.md' },
-      { src: 'skills/tpl-page.prompt.md', dest: '.github/skills/tpl-page.prompt.md' },
-      { src: 'skills/tpl-page-story.prompt.md', dest: '.github/skills/tpl-page-story.prompt.md' },
-      { src: 'skills/tpl-data.prompt.md', dest: '.github/skills/tpl-data.prompt.md' },
-      { src: 'skills/tpl-state.prompt.md', dest: '.github/skills/tpl-state.prompt.md' },
-      { src: 'skills/tpl-style.prompt.md', dest: '.github/skills/tpl-style.prompt.md' },
-      { src: 'skills/tpl-type.prompt.md', dest: '.github/skills/tpl-type.prompt.md' },
+      { src: 'skills/scan-models/SKILL.md', dest: '.github/skills/scan-models/SKILL.md' },
+      { src: 'skills/scan-models/scripts/scan.js', dest: '.github/skills/scan-models/scripts/scan.js' },
+    ],
+  },
+  {
+    name: 'Validate Skill',
+    description: 'Skill for validating project structure, naming, and registry consistency',
+    files: [
+      { src: 'skills/validate/SKILL.md', dest: '.github/skills/validate/SKILL.md' },
     ],
   },
   {
@@ -64,7 +65,7 @@ const categories: FileCategory[] = [
     description: 'Dependency management and model property resolution skills',
     files: [
       { src: 'skills/manage-dependencies.prompt.md', dest: '.github/skills/manage-dependencies.prompt.md' },
-      { src: 'skills/resolve-model-properties.prompt.md', dest: '.github/skills/resolve-model-properties.prompt.md' },
+      { src: 'skills/resolve-model-properties/SKILL.md', dest: '.github/skills/resolve-model-properties/SKILL.md' },
     ],
   },
   {

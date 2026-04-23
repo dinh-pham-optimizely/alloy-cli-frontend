@@ -14,7 +14,7 @@ vi.mock('node:fs', () => ({
 }));
 
 import fs from 'node:fs';
-import { scanModels, writeModelRegistry, updateModelRegistry, REGISTRY_FILENAME } from '../lib/scanner';
+import { scanModels, scanModelsDetailed, writeModelRegistry, updateModelRegistry, REGISTRY_FILENAME } from '../lib/scanner';
 
 describe('scanModels', () => {
   beforeEach(() => {
@@ -88,6 +88,86 @@ describe('scanModels', () => {
     const registry = scanModels('/types');
 
     expect(registry.atoms).toEqual(['ButtonModel']);
+  });
+});
+
+describe('scanModelsDetailed', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.spyOn(console, 'log').mockImplementation(() => {});
+  });
+
+  it('parses interface with properties', () => {
+    vi.mocked(fs.existsSync).mockImplementation((p: any) =>
+      String(p).endsWith('atoms.d.ts'),
+    );
+    vi.mocked(fs.readFileSync).mockReturnValue(
+      'interface ButtonModel extends BasedAtomicModel {\n  label?: string;\n  onClick?: () => void;\n}\n',
+    );
+
+    const registry = scanModelsDetailed('/types');
+
+    expect(registry.index.atoms).toEqual(['ButtonModel']);
+    expect(registry.details['ButtonModel']).toEqual({
+      label: 'string',
+      onClick: '() => void',
+    });
+  });
+
+  it('parses interface with no properties', () => {
+    vi.mocked(fs.existsSync).mockImplementation((p: any) =>
+      String(p).endsWith('organisms.d.ts'),
+    );
+    vi.mocked(fs.readFileSync).mockReturnValue(
+      'interface EmptyModel extends BasedAtomicModel {}\n',
+    );
+
+    const registry = scanModelsDetailed('/types');
+
+    expect(registry.index.organisms).toEqual(['EmptyModel']);
+    expect(registry.details['EmptyModel']).toEqual({});
+  });
+
+  it('parses multiple interfaces with properties', () => {
+    vi.mocked(fs.existsSync).mockImplementation((p: any) =>
+      String(p).endsWith('atoms.d.ts'),
+    );
+    vi.mocked(fs.readFileSync).mockReturnValue(
+      'interface ButtonModel extends BasedAtomicModel {\n  label?: string;\n}\n\n' +
+      'interface ImageModel extends BasedAtomicModel {\n  src?: string;\n  alt?: string;\n}\n',
+    );
+
+    const registry = scanModelsDetailed('/types');
+
+    expect(registry.index.atoms).toEqual(['ButtonModel', 'ImageModel']);
+    expect(registry.details['ButtonModel']).toEqual({ label: 'string' });
+    expect(registry.details['ImageModel']).toEqual({ src: 'string', alt: 'string' });
+  });
+
+  it('handles complex property types', () => {
+    vi.mocked(fs.existsSync).mockImplementation((p: any) =>
+      String(p).endsWith('organisms.d.ts'),
+    );
+    vi.mocked(fs.readFileSync).mockReturnValue(
+      'interface CardModel extends BasedAtomicModel {\n  items?: string[];\n  config?: Record<string, unknown>;\n  isVisible?: boolean;\n}\n',
+    );
+
+    const registry = scanModelsDetailed('/types');
+
+    expect(registry.details['CardModel']).toEqual({
+      items: 'string[]',
+      config: 'Record<string, unknown>',
+      isVisible: 'boolean',
+    });
+  });
+
+  it('returns empty when no type files exist', () => {
+    vi.mocked(fs.existsSync).mockReturnValue(false);
+
+    const registry = scanModelsDetailed('/types');
+
+    expect(registry.index).toEqual({ atoms: [], molecules: [], organisms: [] });
+    expect(registry.details).toEqual({});
   });
 });
 
