@@ -1,0 +1,24 @@
+{
+    "chat.mcp.serverSampling": {
+        "alloy-cli-frontend/.vscode/mcp.json: alloy-scaffold": {
+            "allowedModels": [
+                "copilot/auto",
+                "copilotcli/claude-sonnet-4.6",
+                "claude-code/claude-haiku-4.5",
+                "copilot/claude-haiku-4.5",
+                "copilotcli/claude-haiku-4.5",
+                "claude-code/claude-opus-4.5",
+                "copilot/claude-opus-4.5",
+                "copilotcli/claude-opus-4.5",
+                "claude-code/claude-opus-4.6",
+                "copilot/claude-opus-4.6",
+                "copilotcli/claude-opus-4.6",
+                "claude-code/claude-opus-4.7",
+                "copilot/claude-opus-4.7",
+                "copilotcli/claude-opus-4.7",
+                "claude-code/claude-sonnet-4.6",
+                "copilot/claude-sonnet-4.6"
+            ]
+        }
+    }
+}
