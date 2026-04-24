@@ -97,7 +97,7 @@ const atomAction = async (options: {
 
   const { componentName, projectPrefix, isNeedState, isNeedScript, isNeedStyle } = await commonActions(getTypeFullText(type, false));
 
-  await generateComponentType({ componentName, type, typeDirectory: typeDirectory as string });
+  await generateComponentType({ componentName, type, typeDirectory });
 
   if (isNeedState) {
     await generateComponentState({
@@ -124,6 +124,7 @@ const atomAction = async (options: {
     componentName,
     type,
     isNeedScript,
+    isNeedStyle,
     componentDirectory: componentDirectory as string,
   });
 };
@@ -166,6 +167,7 @@ const moleculeAction = async (options: {
     componentName,
     type,
     isNeedScript,
+    isNeedStyle,
     componentDirectory: componentDirectory as string,
   });
 };
@@ -191,12 +193,12 @@ const pageAction = async (options: {
 
   await generatePageComponent({
     componentName: pageName,
-    isUsingPageStoryTemplate: isUsingPageStoryTemplate,
-    pageDirectory: pageDirectory as string,
+    isUsingPageStoryTemplate,
+    pageDirectory,
   });
 
-  if (isNeedNewTemplateComponent || templateDirectory !== 'templates') {
-    await generateTemplateComponent({ componentName: pageName, templateDirectory: templateDirectory as string });
+  if (isNeedNewTemplateComponent) {
+    await generateTemplateComponent({ componentName: pageName, templateDirectory });
   }
 };
 

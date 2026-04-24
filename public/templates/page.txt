@@ -1,6 +1,6 @@
 <-- ${componentModelName} and other default texts like this will be replaced automatically. See the list in README. -->
 import { ${componentDataName} } from '@data/${componentNameKebabCase}';
-import { ${componentTemplateName} } from '@templates/${componentNameKebabCase}/${componentName}';
+import { ${componentTemplateName} } from '@templates/${componentNameKebabCase}/${componentName}Template';
 
 const ${componentPageName} = () => {
   return <${componentTemplateName} ${componentDataName}={${componentDataName}} />;

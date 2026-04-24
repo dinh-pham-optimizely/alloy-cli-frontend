@@ -125,7 +125,7 @@ describe('renderPageComponent', () => {
   //   import { ProductCardTemplate } from '@templates/product-card/ProductCard'
   // But the correct output should be:
   //   import { ProductCardTemplate } from '@templates/product-card/ProductCardTemplate'
-  it.fails('renders standard page with correct template import path', async () => {
+  it('renders standard page with correct template import path', async () => {
     const result = await renderPageComponent({
       componentName: 'ProductCard',
       isUsingPageStoryTemplate: false,

@@ -182,7 +182,7 @@ describe('atom command', () => {
   // BUG #1: atom command does NOT pass isNeedStyle to generateComponent.
   // Expected correct behavior: isNeedStyle should be passed so RequireCss import is generated.
   // This test asserts the correct behavior and FAILS against the buggy code.
-  it.fails('should pass isNeedStyle to generateComponent', async () => {
+  it('should pass isNeedStyle to generateComponent', async () => {
     vi.mocked(commonActions).mockResolvedValue({
       projectPrefix: 'ab',
       componentName: 'Button',
@@ -238,7 +238,7 @@ describe('molecule command', () => {
   });
 
   // BUG #1: molecule command does NOT pass isNeedStyle to generateComponent (same as atom).
-  it.fails('should pass isNeedStyle to generateComponent', async () => {
+  it('should pass isNeedStyle to generateComponent', async () => {
     vi.mocked(commonActions).mockResolvedValue({
       projectPrefix: 'xx',
       componentName: 'SearchBar',
@@ -303,7 +303,7 @@ describe('page command', () => {
   // BUG #3: The real code uses `if (isNeedNewTemplateComponent || templateDirectory !== 'templates')`
   // When user says NO to template but uses a custom directory, the || makes it generate anyway.
   // Expected: template should only be generated when user explicitly requests it.
-  it.fails('should NOT generate template when user declines even with non-default directory', async () => {
+  it('should NOT generate template when user declines even with non-default directory', async () => {
     vi.mocked(input).mockResolvedValue('ProductCard');
     vi.mocked(confirm)
       .mockResolvedValueOnce(false)   // no story template
