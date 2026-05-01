@@ -14,7 +14,7 @@ Build an MCP server (stdio transport) exposing 5 consolidated tools to replace t
 2. **Name transformations**: Agent mentally applies ~10 naming rules per request. Already pure functions in `lib/helpers.ts`.
 3. **Template rendering**: Agent reads `.prompt.md` skill files (which contain template examples), mentally constructs output. 7 renderers in `lib/renderers.ts` already do this from `.txt` templates.
 4. **File path computation**: Agent computes 8+ paths based on conventions. Already in `lib/generators.ts`.
-5. **Model registry access**: Agent reads `.alloy-models.json` to look up models. Already in `lib/scanner.ts`.
+5. **Model registry access**: Agent reads `.models.json` to look up models. Already in `lib/scanner.ts`.
 6. **Multi-file orchestration**: 8+ file creates + 1 append + 1 registry update per organism. Agent burns tokens confirming each.
 7. **Validation**: Agent verifies PascalCase, checks duplicates — all manually.
 
@@ -280,7 +280,7 @@ Capture results: track which files were created vs skipped (already exist).
 
 ### Tool 4: `registry` (Read/Write)
 
-**Purpose**: Manage `.alloy-models.json` without agent reading/parsing.
+**Purpose**: Manage `.models.json` without agent reading/parsing.
 
 **Inputs (zod schema)**:
 - `action` (z.enum(['read','update','scan'])) — required
@@ -559,7 +559,7 @@ Capture results: track which files were created vs skipped (already exist).
 - Update workflow step 4 (Confirm the plan): "After confirmation, use the `scaffold` MCP tool instead of calling individual skills"
 - Update step 5 (Delegate to skill): "If MCP tools are unavailable, fall back to skill-based generation"
 - Add note: "Use `resolve_names` to compute names instead of manual transformation"
-- Add note: "Use `registry` tool's `read` action instead of reading `.alloy-models.json` directly"
+- Add note: "Use `registry` tool's `read` action instead of reading `.models.json` directly"
 - Add note: "Use `validate` before `scaffold` to catch conflicts early"
 
 **Step 14**: Slim down `tpl-*.prompt.md` skill files (8 files)
@@ -587,7 +587,7 @@ Capture results: track which files were created vs skipped (already exist).
 
 **Step 16**: Update `resolve-model-properties.prompt.md` (*parallel with step 14*)
 - In "Step 1: Read Model Registry", add:
-  - "**Preferred**: Use the `registry` MCP tool with `action: 'read'` instead of reading `.alloy-models.json` directly."
+  - "**Preferred**: Use the `registry` MCP tool with `action: 'read'` instead of reading `.models.json` directly."
 - Keep the rest unchanged (property matching logic is LLM-only)
 
 ### Phase 6: Testing
@@ -682,7 +682,7 @@ Capture results: track which files were created vs skipped (already exist).
 6. E2E `resolve_names`: `ProductCard/o/xx` → all 9 names + 8 paths correct
 7. E2E `render_file`: each of 8 fileTypes → content matches lib renderer output
 8. E2E `scaffold`: full organism → all files created, type appended, registry updated
-9. E2E `registry read` → returns parsed `.alloy-models.json` content
+9. E2E `registry read` → returns parsed `.models.json` content
 10. E2E `validate`: new name → valid, existing name → componentExists conflict
 
 ---

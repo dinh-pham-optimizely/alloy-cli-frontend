@@ -1,3 +1,4 @@
 export * from './resolve-names';
-export * from './render-files';
-export * from './scaffold';
+export * from './render-and-scaffold';
+export * from './model-register';
+export * from './validate';

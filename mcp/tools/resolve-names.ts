@@ -6,12 +6,10 @@ import {
   getComponentModelName,
   getComponentPageName,
   getComponentTemplateName,
-  getCssClassName,
+  getCssClassName, getPaths,
   getTypeFullText,
-  srcPath,
   turnPascalCaseToCamelCase,
 } from '../../lib/helpers';
-import path from 'node:path';
 import server from '../server';
 
 server.registerTool(
@@ -22,7 +20,6 @@ server.registerTool(
     inputSchema: z.object({
       componentName: z.string().describe('Name of the component to scaffold (e.g., "HeroBanner")'),
       type: z.enum(['a', 'm', 'o']).describe('Component type e.g., "a" for atoms, "m" for molecules, "o" for organisms'),
-      projectPrefix: z.string().describe('CSS prefix e.g. xx (for BEM class names like "xx-hero-banner")'),
       directories: z.optional(
         z.object({
           component: z.string().describe('default: `{typeFullText}` (e.g., "organisms")'),
@@ -35,36 +32,16 @@ server.registerTool(
       ),
     }),
   },
-  ({ componentName, type, projectPrefix, directories }) => {
+  ({ componentName, type, directories }) => {
     const typeFullText = getTypeFullText(type);
-    const kebabCase = getComponentAsKebabCase(componentName);
-    const pageName = getComponentPageName(componentName);
-    const templateName = getComponentTemplateName(componentName);
 
-    const name = {
+    const paths = getPaths({
+      typeFullText,
       componentName,
-      modelName: getComponentModelName(componentName),
-      kebabCase,
-      camelCase: turnPascalCaseToCamelCase(componentName),
-      templateName,
-      dataName: getComponentDataName(componentName),
-      pageName,
-      capCase: getComponentAsCapCaseWithSpacing(componentName),
-      cssClass: getCssClassName(componentName, projectPrefix, type),
-    };
-
-    const paths = {
-      component: path.join(srcPath, `${typeFullText}/${kebabCase}/${componentName}.tsx`),
-      type: path.join(srcPath, `_types/${typeFullText}.d.ts`),
-      style: path.join(srcPath, `${typeFullText}/${kebabCase}/${componentName}.scss`),
-      state: path.join(srcPath, `${typeFullText}/${kebabCase}/${componentName}.states.json`),
-      scripts: path.join(srcPath, `assets/scripts/${kebabCase}.entry.ts`),
-      page: path.join(srcPath, `pages/${pageName}.tsx`),
-      template: path.join(srcPath, `templates/${kebabCase}/${templateName}.tsx`),
-    };
+      directories,
+    });
 
     const response = JSON.stringify({
-      name,
       paths,
     });
 

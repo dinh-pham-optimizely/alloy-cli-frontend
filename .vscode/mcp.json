@@ -3,7 +3,8 @@
     "alloy-scaffold": {
       "command": "node",
       "args": [
-        "C:\\Users\\DinhPham\\personal\\alloy-cli-frontend\\dist\\index.cjs"
+        // "C:\\Users\\DinhPham\\personal\\alloy-cli-frontend\\dist\\index.cjs",
+        "D:\\alloy-cli-frontend\\dist\\index.cjs"
       ]
     }
   }

@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { ComponentType } from '../types';
+import { ComponentType, Directories, Path, TemplatePaths } from '../types';
 import { confirm, input } from '@inquirer/prompts';
 import fs from 'node:fs';
 
@@ -12,6 +12,159 @@ const getComponentPageName = (componentName: string) => `${componentName}Page`;
 const getComponentAsCapCaseWithSpacing = (componentName: string) => turnPascalCaseToCapCaseWithSpacing(componentName);
 const getCssClassName = (componentName: string, projectPrefix: string, type: string) =>
   `${projectPrefix}-${type}-${getComponentAsKebabCase(componentName)}`;
+
+const getComponentPathName = ({
+  componentName,
+  typeFullText,
+  kebabCase,
+  directory,
+}: {
+  componentName: string;
+  typeFullText: string;
+  kebabCase: string;
+  directory?: string;
+}): Path => {
+  const directoryPath = path.join(srcPath, `${directory || typeFullText}/${kebabCase}`);
+  const filePath = path.join(directoryPath, `${componentName}.tsx`);
+  const fileExists = fs.existsSync(filePath);
+
+  return { directoryPath, filePath, fileExists };
+};
+
+const getTypePathName = ({ typeFullText, directory }: { typeFullText: string; directory?: string }): Path => {
+  const directoryPath = path.join(srcPath, `${directory || '_types'}`);
+  const filePath = path.join(directoryPath, `${typeFullText}.d.ts`);
+  const fileExists = fs.existsSync(filePath);
+
+  return { directoryPath, filePath, fileExists };
+};
+
+const getStylePathName = ({ componentName, typeFullText, kebabCase }: { typeFullText: string; kebabCase: string; componentName: string }): Path => {
+  const directoryPath = path.join(srcPath, `${typeFullText}/${kebabCase}`);
+  const filePath = path.join(directoryPath, `${componentName}.scss`);
+  const fileExists = fs.existsSync(filePath);
+
+  return { directoryPath, filePath, fileExists };
+};
+
+const getStatePathName = ({ componentName, typeFullText, kebabCase }: { typeFullText: string; kebabCase: string; componentName: string }): Path => {
+  const directoryPath = path.join(srcPath, `${typeFullText}/${kebabCase}`);
+  const filePath = path.join(directoryPath, `${componentName}.states.json`);
+  const fileExists = fs.existsSync(filePath);
+
+  return { directoryPath, filePath, fileExists };
+};
+
+const getScriptPathName = ({ kebabCase, directory }: { kebabCase: string; directory?: string }): Path => {
+  const directoryPath = path.join(srcPath, `${directory || 'assets/scripts'}`);
+  const filePath = path.join(directoryPath, `${kebabCase}.entry.ts`);
+  const fileExists = fs.existsSync(filePath);
+
+  return { directoryPath, filePath, fileExists };
+};
+
+const getPagePathName = ({ pageName, directory }: { pageName: string; directory?: string }): Path => {
+  const directoryPath = path.join(srcPath, `${directory || 'pages'}`);
+  const filePath = path.join(directoryPath, `${pageName}.tsx`);
+  const fileExists = fs.existsSync(filePath);
+
+  return { directoryPath, filePath, fileExists };
+};
+
+const getTemplatePathName = ({ templateName, kebabCase, directory }: { kebabCase: string; templateName: string; directory?: string }): Path => {
+  const directoryPath = path.join(srcPath, `${directory || 'templates'}/${kebabCase}`);
+  const filePath = path.join(directoryPath, `${templateName}.tsx`);
+  const fileExists = fs.existsSync(filePath);
+
+  return { directoryPath, filePath, fileExists };
+};
+
+const getDataPathName = ({ camelCase, directory }: { camelCase: string; directory?: string }): Path => {
+  const directoryPath = path.join(srcPath, `${directory || '_data'}`);
+  const filePath = path.join(directoryPath, `${camelCase}.ts`);
+  const fileExists = fs.existsSync(filePath);
+
+  return { directoryPath, filePath, fileExists };
+};
+
+const getPaths = ({
+  componentName,
+  typeFullText,
+  directories,
+}: {
+  componentName: string;
+  typeFullText: string;
+  directories?: Directories;
+}): TemplatePaths => {
+  const kebabCase = getComponentAsKebabCase(componentName);
+  const pageName = getComponentPageName(componentName);
+  const templateName = getComponentTemplateName(componentName);
+
+  return {
+    component: getComponentPathName({
+      componentName,
+      typeFullText,
+      kebabCase,
+      directory: directories?.component?.trim(),
+    }),
+    type: getTypePathName({ typeFullText, directory: directories?.type?.trim() }),
+    style: getStylePathName({ typeFullText, kebabCase, componentName }),
+    state: getStatePathName({ typeFullText, kebabCase, componentName }),
+    script: getScriptPathName({ kebabCase, directory: directories?.script?.trim() }),
+    page: getPagePathName({ pageName, directory: directories?.page?.trim() }),
+    template: getTemplatePathName({ kebabCase, templateName, directory: directories?.template?.trim() }),
+    data: getDataPathName({ camelCase: getComponentAsCamelCase(componentName), directory: directories?.data?.trim() }),
+  };
+};
+
+const resolvePathForFileType = ({
+  fileType,
+  componentName,
+  directories,
+  type,
+}: {
+  fileType: string;
+  componentName: string;
+  directories?: Directories;
+  type: 'a' | 'm' | 'o';
+}) => {
+  const kebabCase = getComponentAsKebabCase(componentName);
+  const typeFullText = getTypeFullText(type);
+  const pageName = getComponentPageName(componentName);
+  const templateName = getComponentTemplateName(componentName);
+
+  switch (fileType) {
+    case 'component':
+      return getComponentPathName({
+        componentName,
+        typeFullText,
+        kebabCase,
+        directory: directories?.component?.trim(),
+      });
+
+    case 'template':
+      return getTemplatePathName({ kebabCase, templateName, directory: directories?.template?.trim() });
+    case 'page':
+      return getPagePathName({ pageName, directory: directories?.page?.trim() });
+
+    case 'type':
+      return getTypePathName({ typeFullText, directory: directories?.type?.trim() });
+
+    case 'data':
+      return getDataPathName({
+        camelCase: getComponentAsCamelCase(componentName),
+        directory: directories?.data?.trim(),
+      });
+
+    case 'state':
+      return getStatePathName({ typeFullText, kebabCase, componentName });
+
+    case 'style':
+      return getStylePathName({ typeFullText, kebabCase, componentName });
+    default:
+      return '';
+  }
+};
 
 const turnPascalCaseToKebabCase = (text: string) =>
   text
@@ -175,6 +328,11 @@ const generatedFiles = {
   DATA: 'data',
 };
 
+const shouldWrite = (filePath: string, force?: boolean): boolean => {
+  if (force) return true;
+  return !fs.existsSync(filePath);
+};
+
 export {
   srcPath,
   getComponentAsKebabCase,
@@ -198,4 +356,15 @@ export {
   replaceComponentTemplatePlaceholder,
   generatedFiles,
   getCssClassName,
+  getPaths,
+  getTemplatePathName,
+  getStylePathName,
+  getTypePathName,
+  getPagePathName,
+  getScriptPathName,
+  getDataPathName,
+  getComponentPathName,
+  getStatePathName,
+  shouldWrite,
+  resolvePathForFileType,
 };

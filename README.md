@@ -175,7 +175,7 @@ alloy-cli-frontend init --force
 
 ### Scan
 
-Scans your project's type definition files (`src/_types/*.d.ts`) and generates a **model registry** (`.alloy-models.json`) at the project root. The Copilot `@alloy` agent reads this compact registry to resolve property types instantly — instead of grepping through large `.d.ts` files on every invocation.
+Scans your project's type definition files (`src/_types/*.d.ts`) and generates a **model registry** (`.models.json`) at the project root. The Copilot `@alloy` agent reads this compact registry to resolve property types instantly — instead of grepping through large `.d.ts` files on every invocation.
 
 ```bash
 alloy-cli-frontend scan
