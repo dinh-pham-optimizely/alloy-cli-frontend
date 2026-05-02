@@ -161,6 +161,10 @@ const resolvePathForFileType = ({
 
     case 'style':
       return getStylePathName({ typeFullText, kebabCase, componentName });
+
+    case 'script':
+      return getScriptPathName({ kebabCase, directory: directories?.script?.trim() });
+
     default:
       return '';
   }
@@ -242,18 +246,13 @@ const commonActions = async (type: string) => {
 };
 
 const createFolder = (folderPath: string) => {
-  if (!fs.existsSync(folderPath)) {
-    fs.mkdirSync(folderPath, { recursive: true });
-    console.log(`Folder created: ${folderPath}`);
-  }
+  fs.mkdirSync(folderPath, { recursive: true });
+  console.log(`Folder created: ${folderPath}`);
 };
 
 const createFile = (filePath: string, content: string) => {
-  if (!fs.existsSync(filePath)) {
-    // Write the file with the multi-line text content
-    fs.writeFileSync(filePath, content, 'utf8');
-    console.log(`File created with content at: ${filePath}`);
-  }
+  fs.writeFileSync(filePath, content, 'utf8');
+  console.log(`File created with content at: ${filePath}`);
 };
 
 const appendContentToFile = (filePath: string, content: string) => {

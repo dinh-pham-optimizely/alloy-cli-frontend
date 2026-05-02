@@ -350,16 +350,16 @@ describe('getTemplatePath', () => {
 
   it('returns lib/templates path when it exists', () => {
     vi.mocked(fs.existsSync).mockReturnValue(true);
-    const result = getTemplatePath('component1.txt');
+    const result = getTemplatePath('component.txt');
     expect(result).toContain('templates');
-    expect(result).toContain('component1.txt');
+    expect(result).toContain('component.txt');
   });
 
   it('falls back to public/templates when lib path does not exist', () => {
     vi.mocked(fs.existsSync).mockReturnValue(false);
-    const result = getTemplatePath('component1.txt');
+    const result = getTemplatePath('component.txt');
     // Use path.sep-aware check for Windows/Unix compatibility
-    expect(result).toContain('component1.txt');
+    expect(result).toContain('component.txt');
     expect(result).toMatch(/public[/\\]templates[/\\]component\.txt$/);
   });
 });

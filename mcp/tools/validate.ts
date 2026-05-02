@@ -115,10 +115,10 @@ server.registerTool(
           }
         : undefined;
 
-      const typeFileExists = fs.existsSync(`src/_types/${type}s.d.ts`)
+      const typeFileExists = fs.existsSync(`src/_types/${typeFullText}s.d.ts`)
         ? {
             pass: false,
-            message: `Type file for ${typeFullText} does not exist in src/_types/${type}s.d.ts`,
+            message: `Type file for ${typeFullText} does not exist in src/_types/${typeFullText}s.d.ts`,
           }
         : undefined;
 
@@ -154,6 +154,7 @@ server.registerTool(
         registryConflict,
       };
     } catch (error) {
+      isValid = false;
       checks['toolError'] = {
         pass: false,
         message: `An error occurred during validation: ${(error as Error).message}`,

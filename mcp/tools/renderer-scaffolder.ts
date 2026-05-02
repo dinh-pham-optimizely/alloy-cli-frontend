@@ -1,7 +1,7 @@
 import server from '../server';
 import { z } from 'zod';
 import { renderTemplates } from '../../lib/renderers';
-import { createFile, createFolder, resolvePathForFileType, shouldWrite } from '../../lib/helpers';
+import { appendContentToFile, createFile, createFolder, resolvePathForFileType, shouldWrite } from '../../lib/helpers';
 
 server.registerTool(
   'renderer-scaffolder',
@@ -54,8 +54,11 @@ server.registerTool(
           isNeedStyle,
         });
 
-
-        if (filePath && directoryPath && shouldWrite(filePath, force)) {
+        if (fileType === 'type' && filePath && shouldWrite(filePath, false)) {
+          appendContentToFile(filePath, template);
+        } else if (!filePath || !directoryPath) {
+          failed.push({ fileType, path: filePath, reason: 'could not resolve file path' });
+        } else if (shouldWrite(filePath, force)) {
           createFolder(directoryPath);
           createFile(filePath, template);
           created.push({ path: filePath, fileType, action: 'created' });

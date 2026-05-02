@@ -1,7 +1,7 @@
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
-  entry: ['mcp/index.ts'],
+  entry: ['index.ts'],
   format: ['cjs'],
   splitting: false,
   sourcemap: true,

@@ -1,9 +1,0 @@
-{
-  "atoms": [],
-  "molecules": [],
-  "organisms": [
-    "TestimonialModel",
-    "CarbonModel",
-    "SectionModel"
-  ]
-}

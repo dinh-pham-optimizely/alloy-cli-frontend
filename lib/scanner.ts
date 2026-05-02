@@ -70,7 +70,7 @@ const updateModelRegistry = (targetDir: string, componentName: string, type: Com
   const category = TYPE_TO_CATEGORY[type];
   const modelName = `${componentName}Model`;
 
-  if (!modelExistsInRegistry(targetDir, componentName, type)) {
+  if (!registry[category].includes(modelName)) {
     registry[category].push(modelName);
     writeModelRegistry(targetDir, registry);
   }
