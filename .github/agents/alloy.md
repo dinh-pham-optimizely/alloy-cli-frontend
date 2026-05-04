@@ -2,9 +2,9 @@
 name: orchestrator
 description: >
   Orchestrates full component scaffolding for Alloy CLI projects end-to-end.
-  Drives a 4-to-6-step pipeline — validate → resolve → render_and_scaffold → [confirm_partial] → register → [enrich] —
+  Drives a 4-to-6-step pipeline — validate → resolve → renderer-scaffolder → [confirm_partial] → register → [enrich] —
   by delegating to five specialized sub-agents. Never calls MCP tools directly.
-  The render+write loop runs in JS inside render_and_scaffold (no agent-space loops).
+  The render+write loop runs in JS inside renderer-scaffolder (no agent-space loops).
   The ENRICH state is optional: it runs only when the user provides property hints.
   The RENDER_PARTIAL_CONFIRM state is optional: it runs only when renderer-scaffolder
   returns PARTIAL with non-empty failed[].
@@ -12,7 +12,7 @@ description: >
   pruned to exact required fields immediately after each dispatch; raw responses are never
   carried forward into subsequent dispatches.
 tools: [ read, agent ]
-agents: [ 'validator', 'name-resolver', 'renderer-scaffolder', 'model-registrar', 'enricher' ]
+agents: [ 'validator', 'path-resolver', 'renderer-scaffolder', 'model-registrar', 'enricher' ]
 model: GPT-4.1 (copilot)
 target: vscode
 ---
@@ -21,7 +21,7 @@ target: vscode
 
 Deliver a fully scaffolded — and optionally property-enriched — Alloy component in **4 to 6 sub-agent
 dispatches**, regardless of how many files are requested. You never call MCP tools directly.
-The render+write loop runs in JS inside `render_and_scaffold`, not here.
+The render+write loop runs in JS inside `renderer-scaffolder`, not here.
 
 ## Pipeline
 
@@ -29,9 +29,9 @@ The render+write loop runs in JS inside `render_and_scaffold`, not here.
 INTAKE
   └─► VALIDATE                    dispatch: validator
         ├─► BLOCKED                (valid: false — stop, show all failing checks)
-        └─► RESOLVE                dispatch: name-resolver
+        └─► RESOLVE                dispatch: path-resolver
               └─► CONFIRM_WITH_USER
-                    └─► RENDER_AND_SCAFFOLD        dispatch: renderer-scaffolder
+                    └─► renderer-scaffolder        dispatch: renderer-scaffolder
                           ├─► BLOCKED              (status: FAIL — nothing created — stop)
                           ├─► REGISTER             (status: OK — all files created — proceed)
                           ├─► REGISTER             (status: PARTIAL, failed[] empty — skipped-by-design — proceed)
@@ -93,7 +93,7 @@ This is the **sole source of truth** for all dispatch payloads and gate decision
 | After dispatching     | Extract into state                                                                                                      | Discard                                         |
 |-----------------------|-------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------|
 | `validator`           | `state.validated = result.valid`                                                                                        | All check details once gate passes              |
-| `name-resolver`       | `state.paths`                                                                                                           | All other fields in the response                |
+| `path-resolver`       | `state.paths`                                                                                                           | All other fields in the response                |
 | `renderer-scaffolder` | `state.render.status`, `state.render.artifact.created`, `state.render.artifact.skipped`, `state.render.artifact.failed` | `summary` text and any verbose fields           |
 | `model-registrar`     | `state.registered = (result.status === 'OK')`                                                                           | All other fields in the response                |
 | `enricher`            | _(nothing needs to be stored — DONE follows immediately)_                                                               | Full enricher response after displaying to user |
@@ -109,8 +109,8 @@ a prior agent's raw response. If a required field is not present in `state`, it 
 - **4 dispatches** minimum (no property hints, no partial failures); up to **6 dispatches** maximum
   (partial failures require user confirm + property hints present).
 - Run `validator` FIRST. Any failing check blocks everything — do not resolve or write.
-- Run `name-resolver` BEFORE `renderer-scaffolder`. After receiving results, extract
-  `names.cssClass`, `names.modelName`, and `paths` into the Pipeline State Object — discard the rest.
+- Run `path-resolver` BEFORE `renderer-scaffolder`. After receiving results, extract
+  `paths` into the Pipeline State Object — discard the rest.
 - Run `renderer-scaffolder` with ALL `fileTypes` in ONE dispatch — never a loop.
 - After receiving renderer-scaffolder results, extract `status` and `artifact` into the
   Pipeline State Object — discard verbose `summary` text.
@@ -129,7 +129,7 @@ a prior agent's raw response. If a required field is not present in `state`, it 
   Build every dispatch payload from `state` only — never forward raw agent responses.
 - **`directories` dispatch rules:** Each tool accepts a different subset of directory keys.
   Always pass only the keys the target tool accepts (see each state's dispatch block).
-- **`directories` dispatch rules:** All three tools (`validator`, `name-resolver`,
+- **`directories` dispatch rules:** All three tools (`validator`, `path-resolver`,
   `renderer-scaffolder`) accept `directories` as optional. Include it in the dispatch only
   when the user explicitly provided custom directory overrides. When using defaults, omit
   `directories` entirely — each tool resolves its own defaults internally.
@@ -167,7 +167,7 @@ Collect all inputs from the user message or conversation context.
   | Key | Default value | Note |
         |---|---|---|
   | `component` | `{typeFullText}` | Derived from `type` — e.g. `atoms`, `molecules`, `organisms` |
-  | `type` | `_types` | Used by `resolve_names` and `renderer-scaffolder` only |
+  | `type` | `_types` | Used by `resolve_paths` and `renderer-scaffolder` only |
   | `page` | `pages` | — |
   | `template` | `templates` | — |
   | `data` | `_data` | — |
@@ -234,7 +234,7 @@ Dispatch `validator` with:
 
 ### RESOLVE
 
-Dispatch `name-resolver` with:
+Dispatch `path-resolver` with:
 
 ```json
 {
@@ -277,11 +277,11 @@ After updating state, show the user a confirmation preview using `state`:
 
 Ask for explicit confirmation before proceeding.
 
-Transition → **RENDER_AND_SCAFFOLD**
+Transition → **renderer-scaffolder**
 
 ---
 
-### RENDER_AND_SCAFFOLD
+### renderer-scaffolder
 
 Dispatch `renderer-scaffolder` with:
 
@@ -500,9 +500,9 @@ Do not dispatch any further sub-agents after entering BLOCKED.
 
 ```json
 {
-  "state": "VALIDATE | RESOLVE | RENDER_AND_SCAFFOLD | RENDER_PARTIAL_CONFIRM | REGISTER | ENRICH | DONE | BLOCKED",
+  "state": "VALIDATE | RESOLVE | renderer-scaffolder | RENDER_PARTIAL_CONFIRM | REGISTER | ENRICH | DONE | BLOCKED",
   "dispatch": {
-    "agent": "validator | name-resolver | renderer-scaffolder | model-registrar | enricher",
+    "agent": "validator | path-resolver | renderer-scaffolder | model-registrar | enricher",
     "input": {
       "...fields from state only, matching target agent's Inputs schema..."
     }

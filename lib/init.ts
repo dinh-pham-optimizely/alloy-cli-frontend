@@ -27,7 +27,7 @@ const categories: FileCategory[] = [
     files: [
       { src: 'agents/alloy.md', dest: '.github/agents/alloy.md' },
       { src: 'agents/01-validator.md', dest: '.github/agents/01-validator.md' },
-      { src: 'agents/02-name-resolver.md', dest: '.github/agents/02-name-resolver.md' },
+      { src: 'agents/02-path-resolver.md', dest: '.github/agents/02-path-resolver.md' },
       { src: 'agents/03-renderer-scaffolder.md', dest: '.github/agents/03-renderer-scaffolder.md' },
       { src: 'agents/04-model-registrar.md', dest: '.github/agents/04-model-registrar.md' },
       { src: 'agents/05-enricher.md', dest: '.github/agents/05-enricher.md' },

@@ -13,9 +13,9 @@ import {
   getStylePathName,
   getTemplatePathName,
   getTypeFullText,
+  getTypePathName,
 } from '../../lib/helpers';
-import fs from 'node:fs';
-import { modelExistsInRegistry, readModelRegistry } from '../../lib/scanner';
+import { modelExistsInRegistry } from '../../lib/scanner';
 import { ValidationResult } from '../../types';
 
 server.registerTool(
@@ -23,7 +23,7 @@ server.registerTool(
   {
     title: 'validate',
     description: 'Pre-flight checks before scaffolding',
-    inputSchema: {
+    inputSchema: z.object({
       componentName: z.string().describe('Name of the component to scaffold (e.g., "HeroBanner")'),
       type: z.enum(['a', 'm', 'o']).describe('Component type e.g., "a" for atoms, "m" for molecules, "o" for organisms'),
       directories: z.optional(
@@ -37,7 +37,7 @@ server.registerTool(
           state: z.string().describe('State directory'),
         })
       ),
-    },
+    }),
   },
   ({ componentName, type, directories }) => {
     const typeFullText = getTypeFullText(type);
@@ -115,7 +115,7 @@ server.registerTool(
           }
         : undefined;
 
-      const typeFileExists = fs.existsSync(`src/_types/${typeFullText}s.d.ts`)
+      const typeFileExists = getTypePathName({ typeFullText }).fileExists
         ? {
             pass: false,
             message: `Type file for ${typeFullText} does not exist in src/_types/${typeFullText}s.d.ts`,

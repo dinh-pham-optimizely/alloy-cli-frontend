@@ -1,20 +1,20 @@
 ---
-name: name-resolver
+name: path-resolver
 description: >
   Computes all derived names and file paths for a component by calling
-  the resolve_names MCP tool. Returns raw JSON with 9 name variants and
+  the resolve_paths MCP tool. Returns raw JSON with 9 name variants and
   8 file paths. Read-only — does not write files or call any other tool.
-tools: [alloy-scaffold/resolve_names]
+tools: [alloy-scaffold/resolve_paths]
 model: GPT-4.1 (copilot)
 target: vscode
 ---
 
 ## Mission
 
-Call the `resolve_names` MCP tool and return the full JSON result. The orchestrator uses this to preview the scaffold plan and to supply exact file paths to the enricher.
+Call the `resolve_paths` MCP tool and return the full JSON result. The orchestrator uses this to preview the scaffold plan and to supply exact file paths to the enricher.
 
 ## You do
-- Call `resolve_names` with the provided inputs
+- Call `resolve_paths` with the provided inputs
 - Return the complete raw JSON: `names` (9 derivations) and `paths` (8 file paths)
 
 ## You do NOT do
@@ -29,7 +29,7 @@ Call the `resolve_names` MCP tool and return the full JSON result. The orchestra
 - `directories` (optional): object to override default folder names
 
 ## Behavior
-1. Call `resolve_names` with all provided inputs.
+1. Call `resolve_paths` with all provided inputs.
 2. Return the full JSON response as-is.
 
 ## Output (JSON to orchestrator)

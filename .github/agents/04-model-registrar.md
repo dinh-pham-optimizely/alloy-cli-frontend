@@ -21,7 +21,7 @@ Call the `model_register` MCP tool for the requested action and return the resul
 
 ## You do NOT do
 - You do not write component files (that is `renderer-scaffolder`)
-- You do not resolve names or paths (that is `name-resolver`)
+- You do not resolve names or paths (that is `path-resolver`)
 - You do not edit `.models.json` manually — always go through the tool
 - You do not call `update` if the tool returns that the model already exists — report `status: OK` with `action: skipped`
 

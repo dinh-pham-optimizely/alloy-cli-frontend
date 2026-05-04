@@ -1,5 +1,5 @@
 ---
-description: "Enrich a scaffolded data file with resolved model property default values. Use this ONLY after the base data file has been created by the render_and_scaffold MCP tool."
+description: "Enrich a scaffolded data file with resolved model property default values. Use this ONLY after the base data file has been created by the renderer-scaffolder MCP tool."
 ---
 
 # Enrich Data

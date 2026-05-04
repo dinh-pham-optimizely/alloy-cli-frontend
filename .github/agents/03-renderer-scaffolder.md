@@ -2,7 +2,7 @@
 name: renderer-scaffolder
 description: >
   Renders all requested file templates and writes them to disk in a single call
-  by invoking the render_and_scaffold MCP tool. Accepts ALL fileTypes at once —
+  by invoking the renderer-scaffolder MCP tool. Accepts ALL fileTypes at once —
   there is no loop in agent space. The render+write loop runs entirely in JS
   inside the tool, making this a single fixed-cost dispatch regardless of file count.
   After the tool call, this agent performs a mandatory self-check and a limited
@@ -14,7 +14,7 @@ target: vscode
 
 ## Mission
 
-Call the `render_and_scaffold` MCP tool once with the full `fileTypes` array,
+Call the `renderer-scaffolder` MCP tool once with the full `fileTypes` array,
 verify the result via self-check, retry once if transient failures are detected,
 then return a verified status to the orchestrator.
 
@@ -22,12 +22,12 @@ then return a verified status to the orchestrator.
 
 Dispatching render + scaffold in a loop multiplies token cost by file count —
 each iteration carries the full accumulated orchestrator context.
-The `render_and_scaffold` tool absorbs the loop into JS, rendering and writing
+The `renderer-scaffolder` tool absorbs the loop into JS, rendering and writing
 each file internally. This agent makes **at most 2 tool calls**
 (1 initial + 1 retry for failed fileTypes only) regardless of how many files are requested.
 
 ## You do
-- Call `render_and_scaffold` with ALL `fileTypes` at once
+- Call `renderer-scaffolder` with ALL `fileTypes` at once
 - Run a self-check after every tool call (see Self-Check section)
 - Retry **once** with only the failed fileTypes if a transient error is detected
 - Return a verified `created`, `skipped`, and `failed` result to the orchestrator
@@ -50,7 +50,7 @@ each file internally. This agent makes **at most 2 tool calls**
 - `force` (optional boolean, default `false`): overwrite existing files
 
 ## Behavior
-1. Call `render_and_scaffold` with all provided inputs.
+1. Call `renderer-scaffolder` with all provided inputs.
 2. Run **Self-Check** on the tool response (see Self-Check section).
 3. If self-check detects retryable failures → run **Retry Logic** (see Retry Logic section).
 4. Derive final status from the merged result.
@@ -58,7 +58,7 @@ each file internally. This agent makes **at most 2 tool calls**
 
 ## Self-Check
 
-Run immediately after every `render_and_scaffold` call.
+Run immediately after every `renderer-scaffolder` call.
 
 **Step 1 — Coverage check**
 
@@ -98,7 +98,7 @@ do not include them in `failed[]`.
 Execute only when self-check identifies retryable failures and `retry_count < 1`.
 
 1. Extract the `fileType` list from retryable `failed[]` entries only.
-2. Call `render_and_scaffold` again with ONLY those fileTypes (all other inputs identical).
+2. Call `renderer-scaffolder` again with ONLY those fileTypes (all other inputs identical).
 3. Set `retry_count = 1`.
 4. Re-run Self-Check on the new response.
 5. Merge results into the main arrays:
@@ -182,7 +182,7 @@ After self-check and optional retry, derive the final status:
 ```json
 {
   "status": "FAIL",
-  "summary": "render_and_scaffold failed: <error from tool>",
+  "summary": "renderer-scaffolder failed: <error from tool>",
   "artifact": {
     "created": [],
     "skipped": [],

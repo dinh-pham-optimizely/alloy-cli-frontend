@@ -13,10 +13,10 @@ import {
 import server from '../server';
 
 server.registerTool(
-  'resolve_names',
+  'resolve_paths',
   {
-    title: 'Resolve names',
-    description: 'Compute ALL derived names and file paths in one call',
+    title: 'Resolve paths',
+    description: 'Compute ALL file paths in one call',
     inputSchema: z.object({
       componentName: z.string().describe('Name of the component to scaffold (e.g., "HeroBanner")'),
       type: z.enum(['a', 'm', 'o']).describe('Component type e.g., "a" for atoms, "m" for molecules, "o" for organisms'),

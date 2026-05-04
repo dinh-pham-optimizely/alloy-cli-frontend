@@ -1,5 +1,5 @@
 ---
-description: "Enrich a scaffolded TypeScript interface with resolved model properties. Use this ONLY after the base interface has been appended by the render_and_scaffold MCP tool."
+description: "Enrich a scaffolded TypeScript interface with resolved model properties. Use this ONLY after the base interface has been appended by the renderer-scaffolder MCP tool."
 ---
 
 # Enrich Type

@@ -17,7 +17,7 @@ This document replans the MCP tool integration from a single-agent model into a 
 | Fallback path | Inline in `alloy.agent.md` | Orchestrator escalates to MCP-free mode |
 | Agent files location | `.github/agents/alloy.agent.md` | `.github/agents/00–05-*.md` |
 
-The 5 tools themselves (`resolve_names`, `render_files`, `scaffold`, `model_register`, `validate`) are **unchanged**. Only how they are invoked changes.
+The 5 tools themselves (`resolve_paths`, `render_files`, `scaffold`, `model_register`, `validate`) are **unchanged**. Only how they are invoked changes.
 
 ---
 
@@ -27,7 +27,7 @@ The 5 tools themselves (`resolve_names`, `render_files`, `scaffold`, `model_regi
 |---|---|---|---|
 | `00-orchestrator.md` | `orchestrator` | _(none — delegates only)_ | Drives the state machine, enforces gates |
 | `01-validator.md` | `validator` | `validate` | Pre-flight PascalCase + conflict checks |
-| `02-name-resolver.md` | `name-resolver` | `resolve_names` | Computes all names and file paths |
+| `02-path-resolver.md` | `path-resolver` | `resolve_paths` | Computes all names and file paths |
 | `03-file-renderer.md` | `file-renderer` | `render_files` | Renders template content (read-only) |
 | `04-scaffolder.md` | `scaffolder` | `scaffold` | Writes single file to disk |
 | `05-model-registrar.md` | `model-registrar` | `model_register` | Reads, updates, or scans registry |
@@ -59,11 +59,11 @@ RENDER_AND_WRITE_LOOP complete
 
 **VALIDATE** — Dispatch `validator`. On failure: surface all check errors and stop. On pass: proceed.
 
-**RESOLVE** — Dispatch `name-resolver`. Store the full `names` + `paths` JSON — every downstream agent reads from this.
+**RESOLVE** — Dispatch `path-resolver`. Store the full `names` + `paths` JSON — every downstream agent reads from this.
 
 **RENDER_AND_WRITE_LOOP** — Iterate over each `fileType` in the requested list:
 1. Dispatch `file-renderer` → receive `template` string
-2. Dispatch `scaffolder` with the `template` + the `directoryPath` and `filePath` from the `name-resolver` result
+2. Dispatch `scaffolder` with the `template` + the `directoryPath` and `filePath` from the `path-resolver` result
 3. Confirm write before moving to next `fileType`
 
 **REGISTER** — Dispatch `model-registrar` with `action: "update"` to register the new model in `.models.json`.
@@ -86,8 +86,8 @@ User request
     │           └── validate(componentName, type)
     │           └── returns: { valid, checks }
     │
-    ├──[2]──► 02-name-resolver
-    │           └── resolve_names(componentName, type, projectPrefix)
+    ├──[2]──► 02-path-resolver
+    │           └── resolve_paths(componentName, type, projectPrefix)
     │           └── returns: { names, paths }
     │
     │  [for each fileType]:
@@ -117,7 +117,7 @@ description: >
   Drives a validate → resolve → render+write → register pipeline by
   delegating to five specialized sub-agents. Does not call MCP tools directly.
 tools: [read, agent]
-agents: ['validator', 'name-resolver', 'file-renderer', 'scaffolder', 'model-registrar']
+agents: ['validator', 'path-resolver', 'file-renderer', 'scaffolder', 'model-registrar']
 model: copilot
 target: vscode
 ```
@@ -163,14 +163,14 @@ target: vscode
 
 ---
 
-### `02-name-resolver.md`
+### `02-path-resolver.md`
 
 ```yaml
-name: name-resolver
+name: path-resolver
 description: >
   Computes all derived names and file paths for a component by calling
-  the resolve_names MCP tool. Returns raw JSON. Does not write files.
-tools: [resolve_names]
+  the resolve_paths MCP tool. Returns raw JSON. Does not write files.
+tools: [resolve_paths]
 model: copilot
 target: vscode
 ```
@@ -243,12 +243,12 @@ The original plan's Tool 3 (`scaffold` — all files in one call) is **not neede
 
 ### Original Plan (single agent, 5 consolidated tools)
 ```
-validate → resolve_names → scaffold (all files) = 3 tool calls
+validate → resolve_paths → scaffold (all files) = 3 tool calls
 ```
 
 ### New Plan (multi-agent, same tools)
 ```
-validate → resolve_names → [render_files + scaffold] × N files → model_register
+validate → resolve_paths → [render_files + scaffold] × N files → model_register
 = 2 + (2 × N) + 1 calls
 ```
 
@@ -275,7 +275,7 @@ RESOLVE
 ### New files (`.github/agents/`)
 - `00-orchestrator.md` — state machine, delegates to all 5 sub-agents
 - `01-validator.md` — wraps `validate` tool
-- `02-name-resolver.md` — wraps `resolve_names` tool
+- `02-path-resolver.md` — wraps `resolve_paths` tool
 - `03-file-renderer.md` — wraps `render_files` tool
 - `04-scaffolder.md` — wraps `scaffold` tool
 - `05-model-registrar.md` — wraps `model_register` tool

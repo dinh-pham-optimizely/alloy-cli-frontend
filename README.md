@@ -349,31 +349,31 @@ The orchestrator accepts these inputs:
 The orchestrator drives a state machine with up to 6 steps:
 
 ```text
-INTAKE → VALIDATE → RESOLVE → RENDER_AND_SCAFFOLD → REGISTER → [ENRICH] → DONE
+INTAKE → VALIDATE → RESOLVE → renderer-scaffolder → REGISTER → [ENRICH] → DONE
 ```
 
-| Step | Agent | What happens |
-|---|---|---|
-| **VALIDATE** | `01-validator` | Pre-flight checks: PascalCase, no duplicate files, no registry conflicts. Blocks immediately on failure. |
-| **RESOLVE** | `02-name-resolver` | Computes all derived names (kebab, camelCase, CSS class, model name) and file paths. Shows confirmation preview. |
-| **RENDER_AND_SCAFFOLD** | `03-renderer-scaffolder` | Renders all templates and writes all files in a single MCP tool call. Performs self-check; retries once on transient failures. |
-| **REGISTER** | `04-model-registrar` | Adds the new component model to `.models.json` registry. |
+| Step                    | Agent | What happens |
+|-------------------------|---|---|
+| **VALIDATE**            | `01-validator` | Pre-flight checks: PascalCase, no duplicate files, no registry conflicts. Blocks immediately on failure. |
+| **RESOLVE**             | `02-path-resolver` | Computes all derived names (kebab, camelCase, CSS class, model name) and file paths. Shows confirmation preview. |
+| **RENDERER_SCAFFOLDER** | `03-renderer-scaffolder` | Renders all templates and writes all files in a single MCP tool call. Performs self-check; retries once on transient failures. |
+| **REGISTER**            | `04-model-registrar` | Adds the new component model to `.models.json` registry. |
 | **ENRICH** _(optional)_ | `05-enricher` | Populates typed TypeScript properties into component, type, and data files. Runs only when property hints are provided. |
 
 If any step fails, the orchestrator enters **BLOCKED** and reports the exact failure with a suggested fix — no further agents are dispatched.
 
-When `RENDER_AND_SCAFFOLD` returns a partial result (some files written, some failed), the orchestrator pauses and asks whether to continue to REGISTER or stop.
+When `RENDERER_SCAFFOLDER` returns a partial result (some files written, some failed), the orchestrator pauses and asks whether to continue to REGISTER or stop.
 
 ### MCP Tools
 
 The `alloy-scaffold` MCP server exposes four deterministic tools. These run as pure JavaScript — no LLM inference, instant execution, zero token cost:
 
-| Tool | Called by | What it does |
-|---|---|---|
-| `validate` | `01-validator` | Checks PascalCase, file existence, type file writability, registry conflicts |
-| `resolve_names` | `02-name-resolver` | Derives all name variants and computes all file paths from `componentName` + `type` + `projectPrefix` |
-| `render_and_scaffold` | `03-renderer-scaffolder` | Renders every requested file type from templates and writes them to disk in one call |
-| `model_register` | `04-model-registrar` | Reads and updates `.models.json` with the new component model entry |
+| Tool | Called by                | What it does                                                                         |
+|---|--------------------------|--------------------------------------------------------------------------------------|
+| `validate` | `01-validator`           | Checks PascalCase, file existence, type file writability, registry conflicts         |
+| `resolve_paths` | `02-path-resolver`       | Computes all file paths from `componentName` + `type` + `projectPrefix`              |
+| `renderer-scaffolder` | `03-renderer-scaffolder` | Renders every requested file type from templates and writes them to disk in one call |
+| `model_register` | `04-model-registrar`     | Reads and updates `.models.json` with the new component model entry                  |
 
 ### Enrichment Skills
 
@@ -389,7 +389,7 @@ populating typed TypeScript properties into already-scaffolded files:
 | `resolve-model-properties.prompt.md` | Resolves property names to TypeScript types using `.models.json` registry |
 
 > **Base file generation** (component structure, SCSS skeleton, state JSON, etc.) is handled
-> entirely by `render_and_scaffold` MCP tool — not by skills. Skills only activate for
+> entirely by `renderer-scaffolder` MCP tool — not by skills. Skills only activate for
 > property-aware enrichment on top of already-written files.
 
 

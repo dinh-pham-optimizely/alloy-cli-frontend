@@ -54,7 +54,7 @@ server.registerTool(
           isNeedStyle,
         });
 
-        if (fileType === 'type' && filePath && shouldWrite(filePath, false)) {
+        if (fileType === 'type' && filePath) {
           appendContentToFile(filePath, template);
         } else if (!filePath || !directoryPath) {
           failed.push({ fileType, path: filePath, reason: 'could not resolve file path' });

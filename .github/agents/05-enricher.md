@@ -27,7 +27,7 @@ Resolve property hints into typed properties, then enrich the three files that h
 - You do not scaffold new files — that was done by `renderer-scaffolder`
 - You do not create or delete files — only modify existing ones
 - You do not enrich `style`, `state`, `page`, `template`, or `page-story` files unless the orchestrator explicitly requests it
-- You do not call `render_and_scaffold` or any other scaffold tool
+- You do not call `renderer-scaffolder` or any other scaffold tool
 - You do not proceed if a target file does not exist on disk — report `BLOCKED` with the missing path
 
 ## Inputs
@@ -36,7 +36,7 @@ You will receive from the orchestrator:
 - `componentName`: PascalCase name (e.g. `Hero`)
 - `type`: `a`, `m`, or `o`
 - `propertyHints`: array of raw hint strings (e.g. `["title", "description", "image", "cta button"]`)
-- `paths`: object with file paths from the name-resolver result:
+- `paths`: object with file paths from the path-resolver result:
     - `paths.component` — path to the `.tsx` component file
     - `paths.type` — path to the `_types/*.d.ts` file
     - `paths.data` — path to the data `.ts` file

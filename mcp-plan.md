@@ -29,7 +29,7 @@ Build an MCP server (stdio transport) exposing 5 consolidated tools to replace t
 
 ### Token Savings Estimate (per organism generation)
 - **Current**: ~15-20 tool calls + mental computations
-- **With MCP tools**: 2-3 tool calls (`resolve_names` → confirm → `scaffold`)
+- **With MCP tools**: 2-3 tool calls (`resolve_paths` → confirm → `scaffold`)
 - **Estimated reduction**: ~80% fewer tokens
 
 ---
@@ -59,7 +59,7 @@ Build an MCP server (stdio transport) exposing 5 consolidated tools to replace t
 mcp/
   index.ts                    # Server setup, stdio transport, tool registration
   tools/
-    resolve-names.ts          # Tool 1: name + path computation
+    resolve-paths.ts          # Tool 1: name + path computation
     render-file.ts            # Tool 2: template rendering
     scaffold.ts               # Tool 3: full file scaffolding
     registry.ts               # Tool 4: model registry management
@@ -70,7 +70,7 @@ mcp/
 
 ## Tools Design (5 Consolidated Tools)
 
-### Tool 1: `resolve_names` (Read-only)
+### Tool 1: `resolve_paths` (Read-only)
 
 **Purpose**: Compute ALL derived names and file paths in one call.
 
@@ -204,7 +204,7 @@ mcp/
   - `page` (z.boolean(), default false)
   - `pageStory` (z.boolean(), default false) — only when page=true
   - `data` (z.boolean(), default false)
-- `directories` (z.object(), optional) — same as resolve_names
+- `directories` (z.object(), optional) — same as resolve_paths
 - `force` (z.boolean(), optional, default false) — overwrite existing files
 
 **Returns**: JSON `{ created: [{path, action, fileType}], registry: {action, model, category}, skipped: [{path, reason}] }`
@@ -482,7 +482,7 @@ Capture results: track which files were created vs skipped (already exist).
 
 ### Phase 2: Read-Only Tools
 
-**Step 5**: Implement `resolve_names` in `mcp/tools/resolve-names.ts`
+**Step 5**: Implement `resolve_paths` in `mcp/tools/resolve-paths.ts`
 - Import name helpers from `../../lib/helpers`
 - Define zod input schema with `componentName`, `type`, `projectPrefix`, optional `directories`
 - Compute all 9 name derivations using helper functions
@@ -527,7 +527,7 @@ Capture results: track which files were created vs skipped (already exist).
 **Step 10**: Wire tools into MCP server in `mcp/index.ts`
 - Import all 5 tool handlers from `mcp/tools/`
 - Register each with `server.tool()`:
-  - `server.tool("resolve_names", "Compute all derived names and file paths for a component", resolveNamesSchema, resolveNamesHandler)`
+  - `server.tool("resolve_paths", "Compute all derived names and file paths for a component", resolveNamesSchema, resolveNamesHandler)`
   - `server.tool("render_file", "Render a component file from templates", renderFileSchema, renderFileHandler)`
   - `server.tool("scaffold", "Scaffold a complete component with all requested files", scaffoldSchema, scaffoldHandler)`
   - `server.tool("registry", "Read, update, or scan the model registry", registrySchema, registryHandler)`
@@ -558,7 +558,7 @@ Capture results: track which files were created vs skipped (already exist).
 - List all 5 tools with one-line descriptions
 - Update workflow step 4 (Confirm the plan): "After confirmation, use the `scaffold` MCP tool instead of calling individual skills"
 - Update step 5 (Delegate to skill): "If MCP tools are unavailable, fall back to skill-based generation"
-- Add note: "Use `resolve_names` to compute names instead of manual transformation"
+- Add note: "Use `resolve_paths` to compute names instead of manual transformation"
 - Add note: "Use `registry` tool's `read` action instead of reading `.models.json` directly"
 - Add note: "Use `validate` before `scaffold` to catch conflicts early"
 
@@ -593,7 +593,7 @@ Capture results: track which files were created vs skipped (already exist).
 ### Phase 6: Testing
 
 **Step 17**: Add MCP tool unit tests in `__tests__/mcp-tools.test.ts`
-- Test `resolve_names`:
+- Test `resolve_paths`:
   - Input `{ componentName: "ProductCard", type: "o", projectPrefix: "xx" }` → verify all 9 names correct
   - Verify all 8 paths correct
   - Test with custom directories
@@ -616,7 +616,7 @@ Capture results: track which files were created vs skipped (already exist).
   - Test skip behavior for existing files
 
 **Step 18**: Integration test (*depends on step 17*)
-- Test flow: `validate` → `resolve_names` → `scaffold` → verify all files exist with correct content
+- Test flow: `validate` → `resolve_paths` → `scaffold` → verify all files exist with correct content
 - Test against a temp directory to avoid polluting workspace
 
 **Step 19**: Manual E2E validation (*depends on step 18*)
@@ -652,7 +652,7 @@ Capture results: track which files were created vs skipped (already exist).
 - `.github/skills/resolve-model-properties.prompt.md` — Use `registry` tool for model lookup
 
 ### Files to Create
-- `mcp/tools/resolve-names.ts` — resolve_names tool implementation
+- `mcp/tools/resolve-paths.ts` — resolve_paths tool implementation
 - `mcp/tools/render-file.ts` — render_file tool implementation
 - `mcp/tools/scaffold.ts` — scaffold tool implementation
 - `mcp/tools/registry.ts` — registry tool implementation
@@ -679,7 +679,7 @@ Capture results: track which files were created vs skipped (already exist).
 3. `bun run build` — produces `dist/index.cjs` AND `dist/mcp/index.cjs`
 4. `node dist/mcp/index.cjs` — starts without errors, MCP handshake on stdio
 5. VS Code: `.vscode/mcp.json` configured → 5 tools visible in Copilot agent tool list
-6. E2E `resolve_names`: `ProductCard/o/xx` → all 9 names + 8 paths correct
+6. E2E `resolve_paths`: `ProductCard/o/xx` → all 9 names + 8 paths correct
 7. E2E `render_file`: each of 8 fileTypes → content matches lib renderer output
 8. E2E `scaffold`: full organism → all files created, type appended, registry updated
 9. E2E `registry read` → returns parsed `.models.json` content
