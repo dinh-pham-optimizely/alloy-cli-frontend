@@ -115,12 +115,12 @@ server.registerTool(
           }
         : undefined;
 
-      const typeFileExists = !getTypePathName({ typeFullText }).fileExists
-        ? {
+      const typeFileExists = getTypePathName({ typeFullText }).fileExists
+        ? undefined
+        : {
             pass: false,
             message: `Type file for ${typeFullText} does not exist in src/_types/${typeFullText}.d.ts`,
-          }
-        : undefined;
+          };
 
       const registryConflict = modelExistsInRegistry(process.cwd(), componentName, type)
         ? {

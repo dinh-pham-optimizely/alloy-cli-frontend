@@ -33,7 +33,7 @@ const getComponentPathName = ({
 
 const getTypePathName = ({ typeFullText, directory }: { typeFullText: string; directory?: string }): Path => {
   const directoryPath = path.join(srcPath, `${directory || '_types'}`);
-  const filePath = path.join(directoryPath, `${typeFullText}.d.ts`);
+  const filePath = path.join(directoryPath, `${typeFullText}s.d.ts`);
   const fileExists = fs.existsSync(filePath);
 
   return { directoryPath, filePath, fileExists };
