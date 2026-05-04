@@ -8,110 +8,140 @@ import {
 } from './helpers';
 import fs from 'node:fs/promises';
 
-const renderComponentContent = async ({
+const renderComponentContent = async ({ componentName, projectPrefix, type, isNeedScript, isNeedStyle }: GenerateComponent) => {
+  try {
+    let result = await fs.readFile(getTemplatePath(`${generatedFiles.COMPONENT}.txt`), 'utf-8');
+
+    result = `${isNeedScript ? `import RequireJs from '@helpers/RequireJs';` : ''}${
+      isNeedStyle ? `\nimport RequireCss from '@helpers/RequireCss';` : ''
+    }`.concat(result);
+
+    const data = replaceComponentTextVariants(result, componentName, projectPrefix, type);
+
+    const addedPlaceholderContent = replaceComponentTemplatePlaceholder(data, componentName, isNeedScript, isNeedStyle);
+
+    return replaceTemplateComments(addedPlaceholderContent);
+  } catch (error) {
+    throw new Error(`Failed to render component "${componentName}": ${(error as Error).message}`);
+  }
+};
+
+const renderTemplateComponent = async ({ componentName }: GenerateTemplate) => {
+  try {
+    let result = await fs.readFile(getTemplatePath(`${generatedFiles.TEMPLATE}.txt`), 'utf-8');
+    const data = replaceComponentTextVariants(result, componentName);
+
+    return replaceTemplateComments(data);
+  } catch (error) {
+    throw new Error(`Failed to render template for "${componentName}": ${(error as Error).message}`);
+  }
+};
+
+const renderPageComponent = async ({ componentName, isUsingPageStoryTemplate }: GeneratePage) => {
+  try {
+    if (isUsingPageStoryTemplate) {
+      let result = await fs.readFile(getTemplatePath(`${generatedFiles.PAGE_STORY}.txt`), 'utf-8');
+      const data = replaceComponentTextVariants(result, componentName);
+      return replaceTemplateComments(data);
+    }
+    let result = await fs.readFile(getTemplatePath(`${generatedFiles.PAGE}.txt`), 'utf-8');
+    const data = replaceComponentTextVariants(result, componentName);
+    return replaceTemplateComments(data);
+  } catch (error) {
+    throw new Error(`Failed to render page for "${componentName}": ${(error as Error).message}`);
+  }
+};
+
+const renderComponentData = async ({ componentName }: GenerateData) => {
+  try {
+    let result = await fs.readFile(getTemplatePath(`${generatedFiles.DATA}.txt`), 'utf-8');
+    const data = replaceComponentTextVariants(result, componentName);
+    return replaceTemplateComments(data);
+  } catch (error) {
+    throw new Error(`Failed to render data for "${componentName}": ${(error as Error).message}`);
+  }
+};
+
+const renderComponentType = async ({ componentName }: GenerateType) => {
+  try {
+    let result = await fs.readFile(getTemplatePath(`${generatedFiles.TYPE}.txt`), 'utf-8');
+    const data = replaceComponentTextVariants(result, componentName);
+    return replaceTemplateComments(data);
+  } catch (error) {
+    throw new Error(`Failed to render type for "${componentName}": ${(error as Error).message}`);
+  }
+};
+
+const renderComponentStyle = async ({ componentName, type, projectPrefix }: GenerateComponent) => {
+  try {
+    let result = await fs.readFile(getTemplatePath(`${generatedFiles.STYLE}.txt`), 'utf-8');
+    const data = replaceComponentTextVariants(result, componentName, projectPrefix, type);
+
+    return replaceTemplateComments(data);
+  } catch (error) {
+    throw new Error(`Failed to render style for "${componentName}": ${(error as Error).message}`);
+  }
+};
+
+const renderComponentState = async ({ componentName, projectPrefix, type }: GenerateComponent) => {
+  try {
+    let result = await fs.readFile(getTemplatePath(`${generatedFiles.STATE}.txt`), 'utf-8');
+    const data = replaceComponentTextVariants(result, componentName, projectPrefix, type);
+
+    return replaceTemplateComments(data);
+  } catch (error) {
+    throw new Error(`Failed to render state for "${componentName}": ${(error as Error).message}`);
+  }
+};
+
+const renderTemplates = async ({
+  fileType,
   componentName,
-  projectPrefix,
   type,
+  projectPrefix,
   isNeedScript,
   isNeedStyle,
-}: GenerateComponent) =>
-  {
-    try {
-      let result = await fs.readFile(getTemplatePath(`${generatedFiles.COMPONENT}.txt`), 'utf-8');
+}: {
+  fileType: 'component' | 'template' | 'page' | 'page-story' | 'data' | 'type' | 'style' | 'state';
+  componentName: string;
+  type: 'a' | 'm' | 'o';
+  projectPrefix: string;
+  isNeedScript?: boolean;
+  isNeedStyle?: boolean;
+}) => {
+  switch (fileType) {
+    case 'component':
+      return await renderComponentContent({
+        componentName,
+        projectPrefix,
+        type,
+        isNeedScript,
+        isNeedStyle,
+      });
 
-      result = `${isNeedScript ? `import RequireJs from '@helpers/RequireJs';` : ''}${isNeedStyle
-        ? `\nimport RequireCss from '@helpers/RequireCss';`
-        : ''}`.concat(result);
+    case 'template':
+      return await renderTemplateComponent({ componentName });
+    case 'page':
+      return await renderPageComponent({ componentName, isUsingPageStoryTemplate: false });
 
-      const data = replaceComponentTextVariants(result, componentName, projectPrefix, type);
+    case 'page-story':
+      return await renderPageComponent({ componentName, isUsingPageStoryTemplate: true });
 
-      const addedPlaceholderContent = replaceComponentTemplatePlaceholder(data, componentName, isNeedScript, isNeedStyle);
+    case 'type':
+      return await renderComponentType({ componentName, type });
 
-      return replaceTemplateComments(addedPlaceholderContent);
-    } catch (error) {
-      throw new Error(`Failed to render component "${componentName}": ${(error as Error).message}`);
-    }
-  };
+    case 'data':
+      return await renderComponentData({ componentName });
 
-const renderTemplateComponent = async ({ componentName }: GenerateTemplate) =>
-  {
+    case 'state':
+      return await renderComponentState({ componentName, projectPrefix, type });
 
-    try {
-      let result = await fs.readFile(getTemplatePath(`${generatedFiles.TEMPLATE}.txt`), 'utf-8');
-      const data = replaceComponentTextVariants(result, componentName);
-
-      return replaceTemplateComments(data);
-
-    } catch (error) {
-      throw new Error(`Failed to render template for "${componentName}": ${(error as Error).message}`);
-    }
-  };
-
-const renderPageComponent = async ({ componentName, isUsingPageStoryTemplate }: GeneratePage) =>
-  {
-    try {
-      if (isUsingPageStoryTemplate) {
-        let result = await fs.readFile(getTemplatePath(`${generatedFiles.PAGE_STORY}.txt`), 'utf-8');
-        const data = replaceComponentTextVariants(result, componentName);
-        return replaceTemplateComments(data);
-      }
-      let result = await fs.readFile(getTemplatePath(`${generatedFiles.PAGE}.txt`), 'utf-8');
-      const data = replaceComponentTextVariants(result, componentName);
-      return replaceTemplateComments(data);
-
-    } catch (error) {
-      throw new Error(`Failed to render page for "${componentName}": ${(error as Error).message}`);
-    }
-  };
-
-const renderComponentData = async ({ componentName }: GenerateData) =>
-  {
-    try {
-      let result = await fs.readFile(getTemplatePath(`${generatedFiles.DATA}.txt`), 'utf-8');
-      const data = replaceComponentTextVariants(result, componentName);
-      return replaceTemplateComments(data);
-
-    } catch (error) {
-      throw new Error(`Failed to render data for "${componentName}": ${(error as Error).message}`);
-    }
-  };
-
-const renderComponentType = async ({ componentName }: GenerateType) =>
-  {
-    try {
-      let result = await fs.readFile(getTemplatePath(`${generatedFiles.TYPE}.txt`), 'utf-8');
-      const data = replaceComponentTextVariants(result, componentName);
-      return replaceTemplateComments(data);
-    } catch (error) {
-      throw new Error(`Failed to render type for "${componentName}": ${(error as Error).message}`);
-    }
-  };
-
-const renderComponentStyle = async (
-  { componentName, type, projectPrefix }: GenerateComponent,
-) =>
-  {
-    try {
-      let result = await fs.readFile(getTemplatePath(`${generatedFiles.STYLE}.txt`), 'utf-8');
-      const data = replaceComponentTextVariants(result, componentName, projectPrefix, type);
-
-      return replaceTemplateComments(data);
-    } catch (error) {
-      throw new Error(`Failed to render style for "${componentName}": ${(error as Error).message}`);
-    }
-  };
-
-const renderComponentState = async ({ componentName, projectPrefix, type }: GenerateComponent) =>
-  {
-    try {
-      let result = await fs.readFile(getTemplatePath(`${generatedFiles.STATE}.txt`), 'utf-8');
-      const data = replaceComponentTextVariants(result, componentName, projectPrefix, type);
-
-      return replaceTemplateComments(data);
-    } catch (error) {
-      throw new Error(`Failed to render state for "${componentName}": ${(error as Error).message}`);
-    }
-  };
+    case 'style':
+      return await renderComponentStyle({ componentName, type, projectPrefix });
+    default:
+      return '';
+  }
+};
 
 export {
   renderTemplateComponent,
@@ -121,4 +151,5 @@ export {
   renderComponentType,
   renderComponentStyle,
   renderComponentState,
+  renderTemplates,
 };

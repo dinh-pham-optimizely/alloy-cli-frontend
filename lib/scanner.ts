@@ -8,7 +8,7 @@ interface ModelRegistry {
   organisms: string[];
 }
 
-const REGISTRY_FILENAME = '.alloy-models.json';
+const REGISTRY_FILENAME = '.models.json';
 
 const TYPE_FILES: Record<string, keyof ModelRegistry> = {
   'atoms.d.ts': 'atoms',
@@ -57,6 +57,14 @@ const readModelRegistry = (targetDir: string): ModelRegistry => {
   return JSON.parse(content) as ModelRegistry;
 };
 
+const modelExistsInRegistry = (targetDir: string, componentName: string, type: ComponentType): boolean => {
+  const registry = readModelRegistry(targetDir);
+  const category = TYPE_TO_CATEGORY[type];
+  const modelName = `${componentName}Model`;
+
+  return registry[category].includes(modelName);
+};
+
 const updateModelRegistry = (targetDir: string, componentName: string, type: ComponentType) => {
   const registry = readModelRegistry(targetDir);
   const category = TYPE_TO_CATEGORY[type];
@@ -68,4 +76,4 @@ const updateModelRegistry = (targetDir: string, componentName: string, type: Com
   }
 };
 
-export { scanModels, writeModelRegistry, updateModelRegistry, ModelRegistry, REGISTRY_FILENAME };
+export { scanModels, writeModelRegistry, updateModelRegistry, ModelRegistry, REGISTRY_FILENAME, readModelRegistry, modelExistsInRegistry };

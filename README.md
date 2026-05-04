@@ -175,7 +175,7 @@ alloy-cli-frontend init --force
 
 ### Scan
 
-Scans your project's type definition files (`src/_types/*.d.ts`) and generates a **model registry** (`.alloy-models.json`) at the project root. The Copilot `@alloy` agent reads this compact registry to resolve property types instantly — instead of grepping through large `.d.ts` files on every invocation.
+Scans your project's type definition files (`src/_types/*.d.ts`) and generates a **model registry** (`.models.json`) at the project root. The Copilot `@alloy` agent reads this compact registry to resolve property types instantly — instead of grepping through large `.d.ts` files on every invocation.
 
 ```bash
 alloy-cli-frontend scan
@@ -272,7 +272,24 @@ src/
 
 ## Copilot Agent & Skills
 
-Alloy CLI Frontend includes a **GitHub Copilot agent** that brings component generation directly into VS Code Copilot Chat. Instead of running CLI commands and answering prompts one by one, you describe what you want in natural language and the agent generates all the files for you.
+Alloy CLI Frontend includes a **multi-agent GitHub Copilot system** that brings component
+scaffolding directly into VS Code Copilot Chat. Instead of running CLI commands and answering
+prompts one by one, you describe what you want in natural language — a pipeline of specialized
+agents and MCP tools handles validation, name resolution, file generation, registry updates,
+and optional property enrichment automatically.
+
+### Architecture
+
+The system is split into three layers:
+
+| Layer | Location | Responsibility |
+|---|---|---|
+| **Agent layer** | `.github/agents/` | Orchestration, decisions, state machine |
+| **MCP tool layer** | `alloy-scaffold` MCP server | Deterministic execution (no LLM, no token cost) |
+| **Enrichment skills** | `.github/skills/` | LLM-driven property population for typed interfaces |
+
+The key principle: **agents decide, MCP tools execute.** The render+write loop runs entirely
+in JavaScript inside the MCP tools — agents never loop over files.
 
 ### Setup
 
@@ -282,72 +299,99 @@ Run the `init` command in your project root:
 npx alloy-cli-frontend init
 ```
 
-This installs the agent and skill files into your project's `.github/` directory. Restart VS Code (or reload the window) to activate.
+This installs agent files, skill files, and workspace Copilot instructions into your project's
+`.github/` directory. Restart VS Code (or reload the window) to activate.
 
-### What You Get
+Then start the MCP server so the tools are available to agents:
 
-| Category | Files | Purpose |
-|----------|-------|---------|
-| Agent | `alloy.agent.md` | Orchestrator that parses your request and delegates to skills |
-| Generation Skills | 4 skills | Generate atoms, molecules, organisms, and pages |
-| Template Skills | 8 skills | Embedded template blueprints for every file type |
-| Utility Skills | 2 skills | Dependency management and smart property resolution |
-| Instructions | `copilot-instructions.md` | Project-wide Atomic Design conventions for Copilot |
-
-### Using @alloy in Copilot Chat
-
-Open **Copilot Chat** in VS Code and mention `@alloy` to invoke the agent:
-
-```
-@alloy Create an organism called ProductCard with title, description, image, and price.
-       Include style, state, script, and a page view with data.
-       Prefix: xx
+```bash
+npx alloy-cli-frontend mcp
 ```
 
-The agent will:
+Existing files are skipped by default. Use `--force` to overwrite:
 
-1. **Parse your request** — extract component type, name, prefix, optional files, and properties
-2. **Resolve property types** — infer TypeScript types from property names (e.g., `title` → `string`, `items` → `unknown[]`, `onClick` → `() => void`)
-3. **Confirm the plan** — show you a summary of all files to be generated
-4. **Generate files** — create every file using the correct Atomic Design conventions
-5. **Populate models** — fill in the TypeScript interface with resolved properties
-
-#### More Examples
-
-```
-@alloy Create an atom Button with label, onClick, disabled, and variant. Prefix: acme
+```bash
+npx alloy-cli-frontend init --force
 ```
 
-```
-@alloy Generate a molecule SearchBar with placeholder, onSearch, and isLoading. Include style and state. Prefix: xx
+### Invoking the Orchestrator
+
+Open **Copilot Chat** in VS Code and use `@orchestrator` (or the agent name you configured):
+
+```text
+Create an organism HeroBanner with prefix xx, including style, data, and type files. It should have properties: title, description, image, cta button. Also needs CSS and JS loaded.
 ```
 
-```
-@alloy Create a page for an existing organism called HeroBanner
-```
-
-```
-@alloy What files would an organism with a page view generate?
+```text
+Create an atom Button with prefix xx. Include style.
 ```
 
-### Included Skills
+```text
+Create a molecule SearchBar with prefix xx, include style and state. Properties: placeholder, onSearch, isLoading.
+```
 
-| Skill | Description |
-|-------|-------------|
-| `generate-atom` | Scaffolds an atom component with all optional files |
-| `generate-molecule` | Scaffolds a molecule component with all optional files |
-| `generate-organism` | Scaffolds an organism component with page, template, data, and all optional files |
-| `generate-page` | Creates a standalone page and template component |
-| `tpl-component` | Component `.tsx` file template |
-| `tpl-wrapper` | Template wrapper `.tsx` file (works for all component types) |
-| `tpl-page` | Standard page file template |
-| `tpl-page-story` | Story collection page template |
-| `tpl-data` | Data/props file template |
-| `tpl-state` | State JSON file template |
-| `tpl-style` | SCSS style file template |
-| `tpl-type` | TypeScript interface/type definition template |
-| `manage-dependencies` | Updates barrel exports and import statements |
-| `resolve-model-properties` | Resolves property names into typed TypeScript interface fields |
+The orchestrator accepts these inputs:
+
+| Input | Required | Default | Description |
+|---|---|---|---|
+| `componentName` | ✅ | — | PascalCase name (e.g. `HeroBanner`) |
+| `type` | ✅ | — | `a` (atom), `m` (molecule), `o` (organism) |
+| `projectPrefix` | ✅ | — | CSS BEM prefix (e.g. `xx`) |
+| `fileTypes` | ❌ | `component`, `type` | Any of: `component`, `template`, `page`, `page-story`, `data`, `type`, `style`, `state` |
+| `propertyHints` | ❌ | — | Property names extracted from your message — triggers enrichment phase |
+| `isNeedScript` | ❌ | `false` | Add `RequireJs` import to component file |
+| `isNeedStyle` | ❌ | `false` | Add `RequireCss` import to component file |
+| `force` | ❌ | `false` | Overwrite existing files |
+| `directories` | ❌ | type-based defaults | Override output directories |
+
+### Agent Pipeline
+
+The orchestrator drives a state machine with up to 6 steps:
+
+```text
+INTAKE → VALIDATE → RESOLVE → renderer-scaffolder → REGISTER → [ENRICH] → DONE
+```
+
+| Step                    | Agent | What happens |
+|-------------------------|---|---|
+| **VALIDATE**            | `01-validator` | Pre-flight checks: PascalCase, no duplicate files, no registry conflicts. Blocks immediately on failure. |
+| **RESOLVE**             | `02-path-resolver` | Computes all derived names (kebab, camelCase, CSS class, model name) and file paths. Shows confirmation preview. |
+| **RENDERER_SCAFFOLDER** | `03-renderer-scaffolder` | Renders all templates and writes all files in a single MCP tool call. Performs self-check; retries once on transient failures. |
+| **REGISTER**            | `04-model-registrar` | Adds the new component model to `.models.json` registry. |
+| **ENRICH** _(optional)_ | `05-enricher` | Populates typed TypeScript properties into component, type, and data files. Runs only when property hints are provided. |
+
+If any step fails, the orchestrator enters **BLOCKED** and reports the exact failure with a suggested fix — no further agents are dispatched.
+
+When `RENDERER_SCAFFOLDER` returns a partial result (some files written, some failed), the orchestrator pauses and asks whether to continue to REGISTER or stop.
+
+### MCP Tools
+
+The `alloy-scaffold` MCP server exposes four deterministic tools. These run as pure JavaScript — no LLM inference, instant execution, zero token cost:
+
+| Tool | Called by                | What it does                                                                         |
+|---|--------------------------|--------------------------------------------------------------------------------------|
+| `validate` | `01-validator`           | Checks PascalCase, file existence, type file writability, registry conflicts         |
+| `resolve_paths` | `02-path-resolver`       | Computes all file paths from `componentName` + `type` + `projectPrefix`              |
+| `renderer-scaffolder` | `03-renderer-scaffolder` | Renders every requested file type from templates and writes them to disk in one call |
+| `model_register` | `04-model-registrar`     | Reads and updates `.models.json` with the new component model entry                  |
+
+### Enrichment Skills
+
+Skills in `.github/skills/` are invoked only during the optional **ENRICH** phase, when the user
+provides property hints (e.g. `"title, image, cta button"`). They contain LLM instructions for
+populating typed TypeScript properties into already-scaffolded files:
+
+| Skill | Enriches |
+|---|---|
+| `enrich-component.prompt.md` | Adds typed props to the React component interface |
+| `enrich-type.prompt.md` | Populates the TypeScript model interface with resolved property types |
+| `enrich-data.prompt.md` | Fills in the data file with typed default values |
+| `resolve-model-properties.prompt.md` | Resolves property names to TypeScript types using `.models.json` registry |
+
+> **Base file generation** (component structure, SCSS skeleton, state JSON, etc.) is handled
+> entirely by `renderer-scaffolder` MCP tool — not by skills. Skills only activate for
+> property-aware enrichment on top of already-written files.
+
 
 ## Contributing
 

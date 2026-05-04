@@ -1,16 +1,9 @@
 import path from 'node:path';
 import fs from 'node:fs';
 import { checkbox, confirm } from '@inquirer/prompts';
-
-interface FileCategory {
-  name: string;
-  description: string;
-  files: { src: string; dest: string }[];
-}
+import { FileCategory } from '../types';
 
 const getSourceGithubPath = (): string => {
-  // When running from dist/index.cjs, __dirname is dist/
-  // The .github/ folder is shipped alongside dist/ in the npm package
   const fromDist = path.resolve(__dirname, '../.github');
   if (fs.existsSync(fromDist)) {
     return fromDist;
@@ -29,41 +22,34 @@ const getSourceGithubPath = (): string => {
 
 const categories: FileCategory[] = [
   {
-    name: 'Alloy Agent (@alloy)',
+    name: 'Agent (@alloy)',
     description: 'The orchestrator agent that parses requests and delegates to skills',
     files: [
-      { src: 'agents/alloy.agent.md', dest: '.github/agents/alloy.agent.md' },
+      { src: 'agents/alloy.md', dest: '.github/agents/alloy.md' },
+      { src: 'agents/01-validator.md', dest: '.github/agents/01-validator.md' },
+      { src: 'agents/02-path-resolver.md', dest: '.github/agents/02-path-resolver.md' },
+      { src: 'agents/03-renderer-scaffolder.md', dest: '.github/agents/03-renderer-scaffolder.md' },
+      { src: 'agents/04-model-registrar.md', dest: '.github/agents/04-model-registrar.md' },
+      { src: 'agents/05-enricher.md', dest: '.github/agents/05-enricher.md' },
     ],
   },
   {
-    name: 'Generation Skills',
-    description: 'Skills for generating atoms, molecules, organisms, and pages',
+    name: 'Enrich Skills',
+    description: 'Template blueprints for component, state, page, data, state, style, and type files',
     files: [
-      { src: 'skills/generate-atom.prompt.md', dest: '.github/skills/generate-atom.prompt.md' },
-      { src: 'skills/generate-molecule.prompt.md', dest: '.github/skills/generate-molecule.prompt.md' },
-      { src: 'skills/generate-organism.prompt.md', dest: '.github/skills/generate-organism.prompt.md' },
-      { src: 'skills/generate-page.prompt.md', dest: '.github/skills/generate-page.prompt.md' },
-    ],
-  },
-  {
-    name: 'Template Skills',
-    description: 'Template blueprints for component, wrapper, page, data, state, style, and type files',
-    files: [
-      { src: 'skills/tpl-component.prompt.md', dest: '.github/skills/tpl-component.prompt.md' },
-      { src: 'skills/tpl-wrapper.prompt.md', dest: '.github/skills/tpl-wrapper.prompt.md' },
-      { src: 'skills/tpl-page.prompt.md', dest: '.github/skills/tpl-page.prompt.md' },
-      { src: 'skills/tpl-page-story.prompt.md', dest: '.github/skills/tpl-page-story.prompt.md' },
-      { src: 'skills/tpl-data.prompt.md', dest: '.github/skills/tpl-data.prompt.md' },
-      { src: 'skills/tpl-state.prompt.md', dest: '.github/skills/tpl-state.prompt.md' },
-      { src: 'skills/tpl-style.prompt.md', dest: '.github/skills/tpl-style.prompt.md' },
-      { src: 'skills/tpl-type.prompt.md', dest: '.github/skills/tpl-type.prompt.md' },
+      { src: 'skills/enrich-component.md', dest: '.github/skills/enrich-component.md' },
+      { src: 'skills/enrich-state.md', dest: '.github/skills/enrich-state.md' },
+      { src: 'skills/enrich-page.md', dest: '.github/skills/enrich-page.md' },
+      { src: 'skills/enrich-page-story.md', dest: '.github/skills/enrich-page-story.md' },
+      { src: 'skills/enrich-data.md', dest: '.github/skills/enrich-data.md' },
+      { src: 'skills/enrich-style.md', dest: '.github/skills/enrich-style.md' },
+      { src: 'skills/enrich-type.md', dest: '.github/skills/enrich-type.md' },
     ],
   },
   {
     name: 'Utility Skills',
     description: 'Dependency management and model property resolution skills',
     files: [
-      { src: 'skills/manage-dependencies.prompt.md', dest: '.github/skills/manage-dependencies.prompt.md' },
       { src: 'skills/resolve-model-properties.prompt.md', dest: '.github/skills/resolve-model-properties.prompt.md' },
     ],
   },
@@ -81,7 +67,7 @@ const initAction = async (options: { force?: boolean }) => {
   const targetRoot = process.cwd();
   const isForce = options.force ?? false;
 
-  console.log('\n🧩 Alloy CLI — Install Copilot Agent & Skills\n');
+  console.log('\n Alloy CLI — Install Copilot Agent & Skills\n');
 
   const selectedCategories = await checkbox({
     message: 'What would you like to install?',
