@@ -1,10 +1,9 @@
 {
   "servers": {
     "alloy-scaffold": {
-      "command": "node",
+      "command": "alloy-cli-frontend",
       "args": [
-        // "C:\\Users\\DinhPham\\personal\\alloy-cli-frontend\\dist\\index.cjs",
-        "D:\\alloy-cli-frontend\\dist\\index.cjs"
+        "mcp"
       ]
     }
   }
