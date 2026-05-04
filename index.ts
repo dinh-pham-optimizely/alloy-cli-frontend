@@ -8,7 +8,7 @@ import { startMcpServer } from './mcp';
 
 program
   .name('Alloy CLI Frontend')
-  .version('1.2.6')
+  .version('1.2.7')
   .description('Alloy CLI to generate frontend components and more');
 
 program

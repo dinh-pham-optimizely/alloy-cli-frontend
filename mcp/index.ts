@@ -1,4 +1,4 @@
-import { StdioServerTransport } from '@modelcontextprotocol/server';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import server from './server';
 import './tools';
 
