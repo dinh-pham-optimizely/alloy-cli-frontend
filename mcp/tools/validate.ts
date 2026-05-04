@@ -115,10 +115,10 @@ server.registerTool(
           }
         : undefined;
 
-      const typeFileExists = getTypePathName({ typeFullText }).fileExists
+      const typeFileExists = !getTypePathName({ typeFullText }).fileExists
         ? {
             pass: false,
-            message: `Type file for ${typeFullText} does not exist in src/_types/${typeFullText}s.d.ts`,
+            message: `Type file for ${typeFullText} does not exist in src/_types/${typeFullText}.d.ts`,
           }
         : undefined;
 
