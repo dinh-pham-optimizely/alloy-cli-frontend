@@ -4,7 +4,6 @@ import { program } from '@commander-js/extra-typings';
 import { initAction } from './lib/init';
 import { scanModels, writeModelRegistry } from './lib/scanner';
 import path from 'node:path';
-import { startMcpServer } from './mcp';
 
 program
   .name('Alloy CLI Frontend')
@@ -34,16 +33,6 @@ program
     if (registry.molecules.length) console.log(`  Molecules: ${registry.molecules.join(', ')}`);
     if (registry.organisms.length) console.log(`  Organisms: ${registry.organisms.join(', ')}`);
     if (total === 0) console.log('  No models found. Create components first, then re-run scan.');
-  });
-
-program
-  .command('mcp')
-  .description('Initialize ReContext as an MCP Server for AI IDE Clients')
-  .action(async () => {
-      await startMcpServer().catch((error) => {
-          console.error('Fatal error in main():', error);
-          process.exit(1);
-      });
   });
 
 program.parse(process.argv);

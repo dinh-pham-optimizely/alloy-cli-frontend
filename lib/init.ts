@@ -1,7 +1,12 @@
 import path from 'node:path';
 import fs from 'node:fs';
 import { checkbox, confirm } from '@inquirer/prompts';
-import { FileCategory } from '../types';
+
+interface FileCategory {
+  name: string;
+  description: string;
+  files: { src: string; dest: string }[];
+}
 
 const getSourceGithubPath = (): string => {
   const fromDist = path.resolve(__dirname, '../.github');
@@ -9,7 +14,6 @@ const getSourceGithubPath = (): string => {
     return fromDist;
   }
 
-  // When running from source (e.g., bun index.ts), __dirname is project root
   const fromRoot = path.resolve(__dirname, '.github');
   if (fs.existsSync(fromRoot)) {
     return fromRoot;
@@ -22,28 +26,34 @@ const getSourceGithubPath = (): string => {
 
 const categories: FileCategory[] = [
   {
-    name: 'Agent (@alloy)',
+    name: 'Alloy Agent (@alloy)',
     description: 'The orchestrator agent that parses requests and delegates to skills',
     files: [
       { src: 'agents/alloy.md', dest: '.github/agents/alloy.md' },
-      { src: 'agents/01-validator.md', dest: '.github/agents/01-validator.md' },
-      { src: 'agents/02-path-resolver.md', dest: '.github/agents/02-path-resolver.md' },
-      { src: 'agents/03-renderer-scaffolder.md', dest: '.github/agents/03-renderer-scaffolder.md' },
-      { src: 'agents/04-model-registrar.md', dest: '.github/agents/04-model-registrar.md' },
-      { src: 'agents/05-enricher.md', dest: '.github/agents/05-enricher.md' },
     ],
   },
   {
-    name: 'Enrich Skills',
-    description: 'Template blueprints for component, state, page, data, state, style, and type files',
+    name: 'Generation Skills',
+    description: 'Skills for generating atoms, molecules, organisms, and pages',
     files: [
-      { src: 'skills/enrich-component.md', dest: '.github/skills/enrich-component.md' },
-      { src: 'skills/enrich-state.md', dest: '.github/skills/enrich-state.md' },
-      { src: 'skills/enrich-page.md', dest: '.github/skills/enrich-page.md' },
-      { src: 'skills/enrich-page-story.md', dest: '.github/skills/enrich-page-story.md' },
-      { src: 'skills/enrich-data.md', dest: '.github/skills/enrich-data.md' },
-      { src: 'skills/enrich-style.md', dest: '.github/skills/enrich-style.md' },
-      { src: 'skills/enrich-type.md', dest: '.github/skills/enrich-type.md' },
+      { src: 'skills/generate-atom.prompt.md', dest: '.github/skills/generate-atom.prompt.md' },
+      { src: 'skills/generate-molecule.prompt.md', dest: '.github/skills/generate-molecule.prompt.md' },
+      { src: 'skills/generate-organism.prompt.md', dest: '.github/skills/generate-organism.prompt.md' },
+      { src: 'skills/generate-page.prompt.md', dest: '.github/skills/generate-page.prompt.md' },
+    ],
+  },
+  {
+    name: 'Template Skills',
+    description: 'Template blueprints for component, wrapper, page, data, state, style, and type files',
+    files: [
+      { src: 'skills/tpl-component.prompt.md', dest: '.github/skills/tpl-component.prompt.md' },
+      { src: 'skills/tpl-template.prompt.md', dest: '.github/skills/tpl-template.prompt.md' },
+      { src: 'skills/tpl-page.prompt.md', dest: '.github/skills/tpl-page.prompt.md' },
+      { src: 'skills/tpl-page-story.prompt.md', dest: '.github/skills/tpl-page-story.prompt.md' },
+      { src: 'skills/tpl-data.prompt.md', dest: '.github/skills/tpl-data.prompt.md' },
+      { src: 'skills/tpl-state.prompt.md', dest: '.github/skills/tpl-state.prompt.md' },
+      { src: 'skills/tpl-style.prompt.md', dest: '.github/skills/tpl-style.prompt.md' },
+      { src: 'skills/tpl-type.prompt.md', dest: '.github/skills/tpl-type.prompt.md' },
     ],
   },
   {
@@ -87,7 +97,6 @@ const initAction = async (options: { force?: boolean }) => {
     .filter((cat) => selectedCategories.includes(cat.name))
     .flatMap((cat) => cat.files);
 
-  // Check which files already exist
   const existing = filesToInstall.filter((f) =>
     fs.existsSync(path.join(targetRoot, f.dest)),
   );
@@ -123,7 +132,6 @@ const initAction = async (options: { force?: boolean }) => {
       continue;
     }
 
-    // Create directory if needed
     const destDir = path.dirname(destPath);
     if (!fs.existsSync(destDir)) {
       fs.mkdirSync(destDir, { recursive: true });

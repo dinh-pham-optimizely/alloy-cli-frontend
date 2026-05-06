@@ -37,6 +37,10 @@ export const default${componentPageName}: Story = {
 };
 ```
 
+## Strict Output
+
+Output ONLY the exact structure shown above with placeholders replaced. Do NOT add extra imports, stories, metadata fields, comments, or any other code.
+
 ## Example Output
 
 For `ProductCard`:

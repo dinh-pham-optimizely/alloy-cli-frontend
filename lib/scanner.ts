@@ -1,6 +1,5 @@
 import path from 'node:path';
 import fs from 'node:fs';
-import { ComponentType } from '../types';
 
 interface ModelRegistry {
   atoms: string[];
@@ -8,18 +7,12 @@ interface ModelRegistry {
   organisms: string[];
 }
 
-const REGISTRY_FILENAME = '.models.json';
+const REGISTRY_FILENAME = '.alloy-models.json';
 
 const TYPE_FILES: Record<string, keyof ModelRegistry> = {
   'atoms.d.ts': 'atoms',
   'molecules.d.ts': 'molecules',
   'organisms.d.ts': 'organisms',
-};
-
-const TYPE_TO_CATEGORY: Record<ComponentType, keyof ModelRegistry> = {
-  a: 'atoms',
-  m: 'molecules',
-  o: 'organisms',
 };
 
 const MODEL_REGEX = /interface\s+(\w+Model)\s+extends\s+BasedAtomicModel/g;
@@ -48,32 +41,4 @@ const writeModelRegistry = (targetDir: string, registry: ModelRegistry) => {
   console.log(`Model registry written to: ${filePath}`);
 };
 
-const readModelRegistry = (targetDir: string): ModelRegistry => {
-  const filePath = path.join(targetDir, REGISTRY_FILENAME);
-  if (!fs.existsSync(filePath)) {
-    return { atoms: [], molecules: [], organisms: [] };
-  }
-  const content = fs.readFileSync(filePath, 'utf8');
-  return JSON.parse(content) as ModelRegistry;
-};
-
-const modelExistsInRegistry = (targetDir: string, componentName: string, type: ComponentType): boolean => {
-  const registry = readModelRegistry(targetDir);
-  const category = TYPE_TO_CATEGORY[type];
-  const modelName = `${componentName}Model`;
-
-  return registry[category].includes(modelName);
-};
-
-const updateModelRegistry = (targetDir: string, componentName: string, type: ComponentType) => {
-  const registry = readModelRegistry(targetDir);
-  const category = TYPE_TO_CATEGORY[type];
-  const modelName = `${componentName}Model`;
-
-  if (!registry[category].includes(modelName)) {
-    registry[category].push(modelName);
-    writeModelRegistry(targetDir, registry);
-  }
-};
-
-export { scanModels, writeModelRegistry, updateModelRegistry, ModelRegistry, REGISTRY_FILENAME, readModelRegistry, modelExistsInRegistry };
+export { scanModels, writeModelRegistry, ModelRegistry, REGISTRY_FILENAME };
