@@ -41,3 +41,8 @@ const ProductCardPage = () => {
 
 export default ProductCardPage;
 ```
+
+## Strict Output
+
+Output ONLY the exact structure shown above with placeholders replaced. Do NOT add extra imports, JSX elements, hooks, comments, or any other code.
+

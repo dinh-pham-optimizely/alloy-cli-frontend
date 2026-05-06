@@ -27,3 +27,8 @@ For `ProductCard` organism, prefix `xx`:
 .xx-o-product-card {
 }
 ```
+
+## Strict Output
+
+Output ONLY the exact SCSS structure shown above with placeholders replaced. Do NOT add nested selectors, CSS properties, mixins, variables, comments, or any other content. The selector body MUST be empty.
+
