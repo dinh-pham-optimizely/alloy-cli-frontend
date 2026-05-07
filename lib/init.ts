@@ -47,10 +47,10 @@ const categories: FileCategory[] = [
     version: 1,
     description: 'Skills for generating atoms, molecules, organisms, and pages',
     files: [
-      { src: 'skills/v1/generate-atom.prompt.md', dest: '.github/skills/generate-atom.prompt.md' },
-      { src: 'skills/v1/generate-molecule.prompt.md', dest: '.github/skills/generate-molecule.prompt.md' },
-      { src: 'skills/v1/generate-organism.prompt.md', dest: '.github/skills/generate-organism.prompt.md' },
-      { src: 'skills/v1/generate-page.prompt.md', dest: '.github/skills/generate-page.prompt.md' },
+      { src: 'skills/v1/generate-atom.prompt.md', dest: '.github/skills/alloy-scaffolder/generate-atom.prompt.md' },
+      { src: 'skills/v1/generate-molecule.prompt.md', dest: '.github/skills/alloy-scaffolder/generate-molecule.prompt.md' },
+      { src: 'skills/v1/generate-organism.prompt.md', dest: '.github/skills/alloy-scaffolder/generate-organism.prompt.md' },
+      { src: 'skills/v1/generate-page.prompt.md', dest: '.github/skills/alloy-scaffolder/generate-page.prompt.md' },
     ],
   },
   {
@@ -58,10 +58,10 @@ const categories: FileCategory[] = [
     version: 2,
     description: 'Skills for generating atoms, molecules, organisms, and pages',
     files: [
-      { src: 'skills/v2/generate-atom.prompt.md', dest: '.github/skills/generate-atom.prompt.md' },
-      { src: 'skills/v2/generate-molecule.prompt.md', dest: '.github/skills/generate-molecule.prompt.md' },
-      { src: 'skills/v2/generate-organism.prompt.md', dest: '.github/skills/generate-organism.prompt.md' },
-      { src: 'skills/v2/generate-page.prompt.md', dest: '.github/skills/generate-page.prompt.md' },
+      { src: 'skills/v2/generate-atom.prompt.md', dest: '.github/skills/alloy-scaffolder/generate-atom.prompt.md' },
+      { src: 'skills/v2/generate-molecule.prompt.md', dest: '.github/skills/alloy-scaffolder/generate-molecule.prompt.md' },
+      { src: 'skills/v2/generate-organism.prompt.md', dest: '.github/skills/alloy-scaffolder/generate-organism.prompt.md' },
+      { src: 'skills/v2/generate-page.prompt.md', dest: '.github/skills/alloy-scaffolder/generate-page.prompt.md' },
     ],
   },
   {
@@ -69,14 +69,14 @@ const categories: FileCategory[] = [
     version: 1,
     description: 'Template blueprints for component, wrapper, page, data, state, style, and type files',
     files: [
-      { src: 'skills/v1/tpl-component.prompt.md', dest: '.github/skills/tpl-component.prompt.md' },
-      { src: 'skills/v1/tpl-template.prompt.md', dest: '.github/skills/tpl-template.prompt.md' },
-      { src: 'skills/v1/tpl-page.prompt.md', dest: '.github/skills/tpl-page.prompt.md' },
-      { src: 'skills/v1/tpl-page-story.prompt.md', dest: '.github/skills/tpl-page-story.prompt.md' },
-      { src: 'skills/v1/tpl-data.prompt.md', dest: '.github/skills/tpl-data.prompt.md' },
-      { src: 'skills/v1/tpl-state.prompt.md', dest: '.github/skills/tpl-state.prompt.md' },
-      { src: 'skills/v1/tpl-style.prompt.md', dest: '.github/skills/tpl-style.prompt.md' },
-      { src: 'skills/v1/tpl-type.prompt.md', dest: '.github/skills/tpl-type.prompt.md' },
+      { src: 'skills/v1/tpl-component.prompt.md', dest: '.github/skills/alloy-scaffolder/tpl-component.prompt.md' },
+      { src: 'skills/v1/tpl-template.prompt.md', dest: '.github/skills/alloy-scaffolder/tpl-template.prompt.md' },
+      { src: 'skills/v1/tpl-page.prompt.md', dest: '.github/skills/alloy-scaffolder/tpl-page.prompt.md' },
+      { src: 'skills/v1/tpl-page-story.prompt.md', dest: '.github/skills/alloy-scaffolder/tpl-page-story.prompt.md' },
+      { src: 'skills/v1/tpl-data.prompt.md', dest: '.github/skills/alloy-scaffolder/tpl-data.prompt.md' },
+      { src: 'skills/v1/tpl-state.prompt.md', dest: '.github/skills/alloy-scaffolder/tpl-state.prompt.md' },
+      { src: 'skills/v1/tpl-style.prompt.md', dest: '.github/skills/alloy-scaffolder/tpl-style.prompt.md' },
+      { src: 'skills/v1/tpl-type.prompt.md', dest: '.github/skills/alloy-scaffolder/tpl-type.prompt.md' },
     ],
   },
   {
@@ -84,39 +84,39 @@ const categories: FileCategory[] = [
     version: 2,
     description: 'Template blueprints for component, wrapper, page, data, state, style, and type files',
     files: [
-      { src: 'skills/v2/tpl-component.prompt.md', dest: '.github/skills/tpl-component.prompt.md' },
-      { src: 'skills/v2/tpl-template.prompt.md', dest: '.github/skills/tpl-template.prompt.md' },
-      { src: 'skills/v2/tpl-page.prompt.md', dest: '.github/skills/tpl-page.prompt.md' },
-      { src: 'skills/v2/tpl-page-story.prompt.md', dest: '.github/skills/tpl-page-story.prompt.md' },
-      { src: 'skills/v2/tpl-data.prompt.md', dest: '.github/skills/tpl-data.prompt.md' },
-      { src: 'skills/v2/tpl-state.prompt.md', dest: '.github/skills/tpl-state.prompt.md' },
-      { src: 'skills/v2/tpl-style.prompt.md', dest: '.github/skills/tpl-style.prompt.md' },
-      { src: 'skills/v2/tpl-type.prompt.md', dest: '.github/skills/tpl-type.prompt.md' },
+      { src: 'skills/v2/tpl-component.prompt.md', dest: '.github/skills/alloy-scaffolder/tpl-component.prompt.md' },
+      { src: 'skills/v2/tpl-template.prompt.md', dest: '.github/skills/alloy-scaffolder/tpl-template.prompt.md' },
+      { src: 'skills/v2/tpl-page.prompt.md', dest: '.github/skills/alloy-scaffolder/tpl-page.prompt.md' },
+      { src: 'skills/v2/tpl-page-story.prompt.md', dest: '.github/skills/alloy-scaffolder/tpl-page-story.prompt.md' },
+      { src: 'skills/v2/tpl-data.prompt.md', dest: '.github/skills/alloy-scaffolder/tpl-data.prompt.md' },
+      { src: 'skills/v2/tpl-state.prompt.md', dest: '.github/skills/alloy-scaffolder/tpl-state.prompt.md' },
+      { src: 'skills/v2/tpl-style.prompt.md', dest: '.github/skills/alloy-scaffolder/tpl-style.prompt.md' },
+      { src: 'skills/v2/tpl-type.prompt.md', dest: '.github/skills/alloy-scaffolder/tpl-type.prompt.md' },
     ],
   },
   {
     name: 'Utility Skills',
     description: 'Dependency management and model property resolution skills',
     files: [
-      { src: 'skills/resolve-model-properties.prompt.md', dest: '.github/skills/resolve-model-properties.prompt.md' },
+      { src: 'skills/resolve-model-properties.prompt.md', dest: '.github/skills/alloy-scaffolder/resolve-model-properties.prompt.md' },
     ],
   },
-  {
-    name: 'Project Instructions (v1)',
-    version: 1,
-    description: 'Copilot project-wide instructions with Atomic Design conventions',
-    files: [
-      { src: 'instructions/v1/copilot-instructions.md', dest: '.github/copilot-instructions.md' },
-    ],
-  },
-  {
-    name: 'Project Instructions (v2)',
-    version: 2,
-    description: 'Copilot project-wide instructions with Atomic Design conventions',
-    files: [
-      { src: 'instructions/v2/copilot-instructions.md', dest: '.github/copilot-instructions.md' },
-    ],
-  },
+  // {
+  //   name: 'Project Instructions (v1)',
+  //   version: 1,
+  //   description: 'Copilot project-wide instructions with Atomic Design conventions',
+  //   files: [
+  //     { src: 'instructions/v1/copilot-instructions.md', dest: '.github/alloy-scaffolder/copilot-instructions.md' },
+  //   ],
+  // },
+  // {
+  //   name: 'Project Instructions (v2)',
+  //   version: 2,
+  //   description: 'Copilot project-wide instructions with Atomic Design conventions',
+  //   files: [
+  //     { src: 'instructions/v2/copilot-instructions.md', dest: '.github/instructions/alloy-scaffolder/copilot-instructions.md' },
+  //   ],
+  // },
 ];
 
 const initAction = async (options: { force?: boolean }) => {

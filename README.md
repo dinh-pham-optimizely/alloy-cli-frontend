@@ -5,8 +5,6 @@ Alloy CLI Frontend is a command-line tool that installs a **GitHub Copilot agent
 ## Table of Contents
 
 - [Installation](#installation)
-- [Usage](#usage)
-- [Commands](#commands)
     - [Init](#init)
     - [Scan](#scan)
 - [Copilot Agent & Skills](#copilot-agent--skills)
@@ -16,11 +14,13 @@ Alloy CLI Frontend is a command-line tool that installs a **GitHub Copilot agent
 - [Contributing](#contributing)
 - [License](#license)
 
-## Commands
+## Installation
+
+The tool is not really meant to be installed globally — you run it with `npx` in your project root to set up the agent and skills and generate the model registry. This ensures the agent and skills are always in sync with your project:
 
 ### Init
 
-Installs the **Copilot agent and skills** into your project. This copies the `.github/agents/` and `.github/skills/` files that power the `@alloy` Copilot Chat agent.
+Installs the **Copilot agent and skills** into your project. This copies the `.github/agents/` and `.github/skills/alloy-scaffolder` files that power the `@alloy` Copilot Chat agent.
 
 ```bash
 alloy-cli-frontend init
@@ -34,7 +34,6 @@ You'll be presented with an interactive checklist to select which categories to 
 - **Generation Skills** — atom, molecule, organism, and page generators
 - **Template Skills** — blueprints for component, style, state, type, data, page, and template files
 - **Utility Skills** — dependency management and model property resolution
-- **Project Instructions** — project-wide Copilot context with Atomic Design conventions
 
 Existing files are skipped by default. Use `--force` to overwrite:
 
