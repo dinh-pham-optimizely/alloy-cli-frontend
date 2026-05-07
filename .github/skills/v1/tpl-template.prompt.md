@@ -1,10 +1,11 @@
 ---
-description: "Render a template wrapper component that imports and renders a child component"
+description: "Render a template wrapper component with explicit type import"
+version: 1
 ---
 
-# Template Wrapper Component
+# Template Wrapper Component (v1)
 
-Generates a template wrapper `.tsx` file. Templates wrap a component with layout markup and pass data props through.
+Generates a template wrapper `.tsx` file. This is the **v1** version with explicit type import.
 
 ## Inputs
 
@@ -16,8 +17,6 @@ Generates a template wrapper `.tsx` file. Templates wrap a component with layout
 - `componentTypePlural` — the plural type directory: `atoms`, `molecules`, or `organisms`
 
 ## Template
-
-Generate the file with this structure. Replace `${componentTypePlural}` with the correct type directory (`atoms`, `molecules`, or `organisms`):
 
 ```tsx
 import { ${componentModelName} } from '@_types/types';
@@ -75,3 +74,8 @@ export const ButtonTemplate = (model: Props) => {
 
 export default ButtonTemplate;
 ```
+
+## Strict Output
+
+Output ONLY the exact structure shown above with placeholders replaced. Do NOT add extra imports, JSX elements, hooks, comments, or any other code.
+

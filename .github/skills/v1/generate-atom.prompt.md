@@ -1,10 +1,11 @@
 ---
 description: "Generate an Atom component with optional style, state, script, type definition, page, template, and data file"
+version: 1
 ---
 
-# Generate Atom Component
+# Generate Atom Component (v1)
 
-Generate an **Atom** component following the Atomic Design pattern. Atoms are the smallest reusable UI units (buttons, inputs, icons).
+Generate an (v1) **Atom** component following the Atomic Design pattern. Atoms are the smallest reusable UI units (buttons, inputs, icons).
 
 ## Required Inputs
 
@@ -98,13 +99,13 @@ Use `#prompt:tpl-data` to generate this file.
 ## Important Notes
 
 - Each file's content MUST exactly match the output of its corresponding `#prompt:tpl-*` skill — do NOT add, modify, or embellish beyond what the template produces
-- The type file uses **append** mode — add the new interface to the very BOTTOM (end) of `src/_types/atoms.d.ts`. NEVER prepend to the top or insert before existing interfaces. All existing content must remain unchanged above the new interface
+- The type file uses **append** mode — add the new definition to the very BOTTOM (end) of `src/_types/atoms.d.ts`. NEVER prepend to the top or insert before existing definitions
 - Create directories if they don't exist
 - The component, style, and state files all go in `src/atoms/{kebab-name}/`
 - The script file goes in `src/assets/scripts/`
 - The template goes in `src/templates/{kebab-name}/`
 - The page goes in `src/pages/`
 - The data file goes in `src/_data/`
-- When generating the template component, replace `@organisms/` with `@atoms/` in the import path
+- When generating the template component, use `componentTypePlural` = `atoms` (results in `@atoms/` import path)
 - The template component is automatically created when a page is requested (pages need templates)
 - When a page is requested, also ask if the user wants to create a data file (pages import data)

@@ -19,30 +19,30 @@ You can generate the following component types by delegating to specific skills:
 ## Workflow
 
 1. **Parse the request** — Identify what the user wants to create. Look for:
-  - Component type: atom / molecule / organism / page
-  - Component name (must be PascalCase)
-  - Project prefix (for CSS classes, e.g. `xx`)
-  - Optional files: style, script, state, page, template, data
-  - **Property hints**: Extract property names from natural language. Look for patterns like:
+- Component type: atom / molecule / organism / page
+- Component name (must be PascalCase)
+- Project prefix (for CSS classes, e.g. `xx`)
+- Optional files: style, script, state, page, template, data
+- **Property hints**: Extract property names from natural language. Look for patterns like:
     - "with title, description, and image"
     - "having a label and onClick handler"
     - "that has items, isVisible, and count"
     - "including header image, cta button, navigation links"
-  - If properties are mentioned, use `#prompt:resolve-model-properties` to resolve their types
+- If properties are mentioned, use `#prompt:resolve-model-properties` to resolve their types
 
 2. **Validate the component name** — The name MUST be PascalCase (e.g., `ProductCard`, `SearchBar`, `Button`).
-  - Reject names that are kebab-case (`product-card`), camelCase (`productCard`), snake_case (`product_card`), or all lowercase (`button`).
-  - If invalid, ask the user to provide a PascalCase name. Suggest the corrected version.
+- Reject names that are kebab-case (`product-card`), camelCase (`productCard`), snake_case (`product_card`), or all lowercase (`button`).
+- If invalid, ask the user to provide a PascalCase name. Suggest the corrected version.
 
 3. **Ask for missing information** — If the user hasn't specified:
-  - Component type → ask which type (atom, molecule, organism)
-  - Project prefix → ask for it (e.g., "What's your CSS class prefix? Example: `xx` in `xx-o-product-card`")
-  - Optional files → ask which optional files they want (style, script, state)
-  - For all component types: ask about page view, and if yes:
+- Component type → ask which type (atom, molecule, organism)
+- Project prefix → ask for it (e.g., "What's your CSS class prefix? Example: `xx` in `xx-o-product-card`")
+- Optional files → ask which optional files they want (style, script, state)
+- For all component types: ask about page view, and if yes:
     - Ask about story template format
     - Template component is auto-created alongside the page
     - Ask about data file (pages import data)
-  - For organisms additionally: data file can also be created independently of page
+- For organisms additionally: data file can also be created independently of page
 
 4. **Confirm the plan** — Before generating, show the user a summary:
    ```

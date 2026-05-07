@@ -26,6 +26,8 @@ Installs the **Copilot agent and skills** into your project. This copies the `.g
 alloy-cli-frontend init
 ```
 
+You'll need to choose the version of the agent and skills to install (v1 or v2). The versions differ in their templates and instructions — v2 has updated file naming conventions and simplified component templates.
+
 You'll be presented with an interactive checklist to select which categories to install:
 
 - **Alloy Agent** — the `@alloy` orchestrator agent

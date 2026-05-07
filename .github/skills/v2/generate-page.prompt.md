@@ -1,8 +1,9 @@
 ---
 description: "Generate a Page component with optional story template and template component"
+version: 2
 ---
 
-# Generate Page Component
+# Generate Page Component (v2)
 
 Generate a **Page** component. Pages are top-level view components that import data and render through a template.
 
@@ -33,7 +34,7 @@ From the PascalCase `componentName`, derive:
 
 **Without story template**:
 
-**Path**: `src/pages/{componentName}Page.tsx`
+**Path**: `src/pages/{kebab-case}.tsx`
 
 Use `#prompt:tpl-page` to generate this file. See `#prompt:tpl-page` for expected output.
 
@@ -43,7 +44,7 @@ Use `#prompt:tpl-page-story` instead. See `#prompt:tpl-page-story` for expected 
 
 ### 2. Template component (optional)
 
-**Path**: `src/templates/{kebab-name}/{componentName}Template.tsx`
+**Path**: `src/templates/{kebab-name}/index.tsx`
 
 Use `#prompt:tpl-template` with `componentTypePlural` = `organisms` to generate this file (standalone pages wrap organisms by default). See `#prompt:tpl-template` for expected output.
 
@@ -57,5 +58,5 @@ Use `#prompt:tpl-template` with `componentTypePlural` = `organisms` to generate 
 - Each file's content MUST exactly match the output of its corresponding `#prompt:tpl-*` skill — do NOT add, modify, or embellish beyond what the template produces
 - Create the `src/pages/` directory if it doesn't exist
 - Create `src/templates/{kebab-name}/` directory if generating a template
-- The page imports data from `@data/{kebab-name}` and template from `@templates/{kebab-name}/{componentName}`
-- The template imports the organism from `@organisms/{kebab-name}/{componentName}`
+- The page imports data from `@data/{kebab-name}` and template from `@templates/{kebab-name}/index`
+- The template imports the organism from `@organisms/{kebab-name}/index`
