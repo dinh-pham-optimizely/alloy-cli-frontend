@@ -1,10 +1,11 @@
 ---
 description: "Render a component TSX file from the component template"
+version: 1
 ---
 
-# Component Template
+# Component Template (v1)
 
-Generates the main React component `.tsx` file for any Atomic Design component type (atom, molecule, organism).
+Generates the main React component `.tsx` file for any Atomic Design component type (atom, molecule, organism). This is the **v1** version with explicit type and helper imports.
 
 ## Inputs
 
@@ -19,7 +20,7 @@ Generates the main React component `.tsx` file for any Atomic Design component t
 
 ## Template
 
-**Without properties** (default — backward compatible):
+**Without properties** (default):
 
 ```tsx
 import { ${componentModelName} } from '@_types/types';
@@ -80,7 +81,7 @@ And add this JSX inside the `<div>` (after RequireJs if present):
 
 ## Example Output
 
-For `Button` atom with both script and style, prefix `xx`:
+`Button` atom with both script and style, prefix `xx`:
 
 ```tsx
 import RequireJs from '@helpers/RequireJs';

@@ -1,0 +1,20 @@
+<-- ${componentModelName} and other default texts like this will be replaced automatically. See the list in README. -->
+import ${componentName} from '@organisms/${componentNameKebabCase}/${componentName}';
+
+interface Props {
+  ${componentDataName}?: ${componentModelName};
+}
+
+export const ${componentTemplateName} = (model: Props) => {
+  const { ${componentDataName} } = model;
+
+  return (
+    <>
+      <main>
+        <${componentName} {...${componentDataName}} />
+      </main>
+    </>
+  );
+}
+
+export default ${componentTemplateName};

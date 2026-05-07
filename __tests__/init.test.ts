@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import path from 'node:path';
+import fs from 'node:fs';
+import { checkbox, confirm, select } from '@inquirer/prompts';
 
 vi.mock('node:fs', () => ({
   default: {
@@ -7,20 +8,21 @@ vi.mock('node:fs', () => ({
     mkdirSync: vi.fn(),
     copyFileSync: vi.fn(),
     readFileSync: vi.fn(),
+    writeFileSync: vi.fn(),
   },
   existsSync: vi.fn(),
   mkdirSync: vi.fn(),
   copyFileSync: vi.fn(),
   readFileSync: vi.fn(),
+  writeFileSync: vi.fn(),
 }));
 
 vi.mock('@inquirer/prompts', () => ({
   checkbox: vi.fn(),
   confirm: vi.fn(),
+  select: vi.fn(),
 }));
 
-import fs from 'node:fs';
-import { checkbox, confirm } from '@inquirer/prompts';
 
 // We need to test initAction's internal logic, but it's tightly coupled.
 // We'll test the getSourceGithubPath logic and the file copy behavior.
@@ -47,6 +49,7 @@ describe('init command', () => {
       });
 
       vi.mocked(checkbox).mockResolvedValue(['Project Instructions']);
+      vi.mocked(select).mockResolvedValue('v2');
 
       const { initAction } = await import('../lib/init');
       await initAction({});
@@ -60,6 +63,7 @@ describe('init command', () => {
       vi.mocked(fs.existsSync).mockReturnValue(true);
 
       vi.mocked(checkbox).mockResolvedValue(['Alloy Agent (@alloy)']);
+      vi.mocked(select).mockResolvedValue('v2');
 
       const { initAction } = await import('../lib/init');
       await initAction({});
@@ -84,6 +88,7 @@ describe('init command', () => {
       vi.mocked(fs.existsSync).mockReturnValue(true);
 
       vi.mocked(checkbox).mockResolvedValue(['Alloy Agent (@alloy)']);
+      vi.mocked(select).mockResolvedValue('v2');
       vi.mocked(confirm).mockResolvedValue(false); // User says no to overwrite
 
       const { initAction } = await import('../lib/init');
@@ -97,6 +102,7 @@ describe('init command', () => {
       vi.mocked(fs.existsSync).mockReturnValue(true);
 
       vi.mocked(checkbox).mockResolvedValue(['Alloy Agent (@alloy)']);
+      vi.mocked(select).mockResolvedValue('v1');
       vi.mocked(confirm).mockResolvedValue(true); // User confirms overwrite
 
       const { initAction } = await import('../lib/init');

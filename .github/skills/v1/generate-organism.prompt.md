@@ -1,8 +1,9 @@
 ---
 description: "Generate an Organism component with optional page, template, data, style, state, script, and type definition"
+version: 1
 ---
 
-# Generate Organism Component
+# Generate Organism Component (v1)
 
 Generate an **Organism** component following the Atomic Design pattern. Organisms are the most complex component type — they can have pages, templates, data files, and all optional files.
 
@@ -16,7 +17,7 @@ Generate an **Organism** component following the Atomic Design pattern. Organism
 
 Ask the user about each:
 - **Separate page view** — creates a page component. If yes, also ask:
-    - **Story template** — use the story collection page format instead of standard page
+  - **Story template** — use the story collection page format instead of standard page
 - **Data file** — creates a typed data/props file
 - **Style file** (`.scss`)
 - **Script file** (`.entry.ts`)
@@ -98,7 +99,7 @@ Create an empty file.
 ## Important Notes
 
 - Each file's content MUST exactly match the output of its corresponding `#prompt:tpl-*` skill — do NOT add, modify, or embellish beyond what the template produces
-- The type file uses **append** mode — add the new interface to the very BOTTOM (end) of `src/_types/organisms.d.ts`. NEVER prepend to the top or insert before existing interfaces. All existing content must remain unchanged above the new interface
+- The type file uses **append** mode — add the new definition to the very BOTTOM (end) of `src/_types/organisms.d.ts`. NEVER prepend to the top or insert before existing definitions
 - Template component is ONLY generated when the user wants a separate page view
 - The page component imports from the template, which imports from the organism
 - Data file name uses **camelCase** (e.g., `productCard.ts`), NOT kebab-case

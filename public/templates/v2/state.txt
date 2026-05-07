@@ -1,0 +1,10 @@
+<-- ${componentModelName} and other default texts like this will be replaced automatically. See the list in README. -->
+{
+  "name": "${componentAsCapCaseWithSpacing}",
+  "selector": ".${projectPrefix}-${type}-${componentNameKebabCase}",
+  "button": {
+    "zIndex": 0,
+    "styleModifier": ""
+  },
+  "states": []
+}

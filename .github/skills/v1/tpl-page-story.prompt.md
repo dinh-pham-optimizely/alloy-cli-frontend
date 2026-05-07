@@ -1,10 +1,11 @@
 ---
-description: "Render a story collection page component with metadata and render function"
+description: "Render a story collection page with Story/StoryCollectionMeta import"
+version: 1
 ---
 
-# Page Story Template
+# Page Story Template (v1)
 
-Generates a story collection page `.tsx` file with `StoryCollectionMeta` metadata and a default story render function.
+Generates a story collection page `.tsx` file with `StoryCollectionMeta` metadata and a default story render function. This is the **v1** version with explicit `Story, StoryCollectionMeta` import.
 
 ## Inputs
 
@@ -37,10 +38,6 @@ export const default${componentPageName}: Story = {
 };
 ```
 
-## Strict Output
-
-Output ONLY the exact structure shown above with placeholders replaced. Do NOT add extra imports, stories, metadata fields, comments, or any other code.
-
 ## Example Output
 
 For `ProductCard`:
@@ -63,3 +60,8 @@ export const defaultProductCardPage: Story = {
   },
 };
 ```
+
+## Strict Output
+
+Output ONLY the exact structure shown above with placeholders replaced. Do NOT add extra imports, stories, metadata fields, comments, or any other code.
+

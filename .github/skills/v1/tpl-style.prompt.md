@@ -1,8 +1,9 @@
 ---
 description: "Render an SCSS style file with the component's CSS class selector"
+version: 1
 ---
 
-# Style Template
+# Style Template (v1)
 
 Generates a `.scss` file with an empty CSS class selector following the `{prefix}-{type}-{kebab}` naming convention.
 

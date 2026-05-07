@@ -1,8 +1,9 @@
 ---
 description: "Render a standard page component that imports data and template"
+version: 1
 ---
 
-# Page Template
+# Page Template (v1)
 
 Generates a standard page `.tsx` file that imports a data object and renders it through a template component.
 

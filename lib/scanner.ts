@@ -15,7 +15,8 @@ const TYPE_FILES: Record<string, keyof ModelRegistry> = {
   'organisms.d.ts': 'organisms',
 };
 
-const MODEL_REGEX = /interface\s+(\w+Model)\s+extends\s+BasedAtomicModel/g;
+const MODEL_REGEX_V1 = /interface\s+(\w+Model)\s+extends\s+BasedAtomicModel/g;
+const MODEL_REGEX_V2 = /type\s+(\w+Model)\s*=\s*BasedAtomicModel\s*&/g;
 
 const scanModels = (typesDir: string): ModelRegistry => {
   const registry: ModelRegistry = { atoms: [], molecules: [], organisms: [] };
@@ -26,10 +27,18 @@ const scanModels = (typesDir: string): ModelRegistry => {
 
     const content = fs.readFileSync(filePath, 'utf8');
     let match: RegExpExecArray | null;
-    while ((match = MODEL_REGEX.exec(content)) !== null) {
+
+    while ((match = MODEL_REGEX_V1.exec(content)) !== null) {
       registry[category].push(match[1]);
     }
-    MODEL_REGEX.lastIndex = 0;
+    MODEL_REGEX_V1.lastIndex = 0;
+
+    while ((match = MODEL_REGEX_V2.exec(content)) !== null) {
+      if (!registry[category].includes(match[1])) {
+        registry[category].push(match[1]);
+      }
+    }
+    MODEL_REGEX_V2.lastIndex = 0;
   }
 
   return registry;

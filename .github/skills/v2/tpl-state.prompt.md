@@ -1,8 +1,9 @@
 ---
 description: "Render a JSON state configuration file for a component"
+version: 2
 ---
 
-# State Template
+# State Template (v2)
 
 Generates a `.states.json` file with the component selector, button configuration, and empty states array.
 
@@ -21,7 +22,8 @@ Generates a `.states.json` file with the component selector, button configuratio
   "selector": ".${projectPrefix}-${type}-${componentNameKebabCase}",
   "button": {
     "zIndex": 0,
-    "styleModifier": ""
+    "styleModifier": "",
+    "parentSelector": ""
   },
   "states": []
 }
@@ -37,7 +39,8 @@ For `ProductCard` organism, prefix `xx`:
   "selector": ".xx-o-product-card",
   "button": {
     "zIndex": 0,
-    "styleModifier": ""
+    "styleModifier": "",
+    "parentSelector": ""
   },
   "states": []
 }

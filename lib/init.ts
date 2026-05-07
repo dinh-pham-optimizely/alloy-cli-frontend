@@ -1,10 +1,11 @@
 import path from 'node:path';
 import fs from 'node:fs';
-import { checkbox, confirm } from '@inquirer/prompts';
+import { checkbox, confirm, select } from '@inquirer/prompts';
 
 interface FileCategory {
   name: string;
   description: string;
+  version?: number;
   files: { src: string; dest: string }[];
 }
 
@@ -26,34 +27,71 @@ const getSourceGithubPath = (): string => {
 
 const categories: FileCategory[] = [
   {
-    name: 'Alloy Agent (@alloy)',
+    name: 'Alloy Agent (@alloy) (v1)',
+    version: 1,
     description: 'The orchestrator agent that parses requests and delegates to skills',
     files: [
-      { src: 'agents/alloy.md', dest: '.github/agents/alloy.md' },
+      { src: 'agents/v1/alloy.md', dest: '.github/agents/alloy.md' },
     ],
   },
   {
-    name: 'Generation Skills',
+    name: 'Alloy Agent (@alloy) (v2)',
+    version: 2,
+    description: 'The orchestrator agent that parses requests and delegates to skills',
+    files: [
+      { src: 'agents/v2/alloy.md', dest: '.github/agents/alloy.md' },
+    ],
+  },
+  {
+    name: 'Generation Skills (v1)',
+    version: 1,
     description: 'Skills for generating atoms, molecules, organisms, and pages',
     files: [
-      { src: 'skills/generate-atom.prompt.md', dest: '.github/skills/generate-atom.prompt.md' },
-      { src: 'skills/generate-molecule.prompt.md', dest: '.github/skills/generate-molecule.prompt.md' },
-      { src: 'skills/generate-organism.prompt.md', dest: '.github/skills/generate-organism.prompt.md' },
-      { src: 'skills/generate-page.prompt.md', dest: '.github/skills/generate-page.prompt.md' },
+      { src: 'skills/v1/generate-atom.prompt.md', dest: '.github/skills/generate-atom.prompt.md' },
+      { src: 'skills/v1/generate-molecule.prompt.md', dest: '.github/skills/generate-molecule.prompt.md' },
+      { src: 'skills/v1/generate-organism.prompt.md', dest: '.github/skills/generate-organism.prompt.md' },
+      { src: 'skills/v1/generate-page.prompt.md', dest: '.github/skills/generate-page.prompt.md' },
     ],
   },
   {
-    name: 'Template Skills',
+    name: 'Generation Skills (v2)',
+    version: 2,
+    description: 'Skills for generating atoms, molecules, organisms, and pages',
+    files: [
+      { src: 'skills/v2/generate-atom.prompt.md', dest: '.github/skills/generate-atom.prompt.md' },
+      { src: 'skills/v2/generate-molecule.prompt.md', dest: '.github/skills/generate-molecule.prompt.md' },
+      { src: 'skills/v2/generate-organism.prompt.md', dest: '.github/skills/generate-organism.prompt.md' },
+      { src: 'skills/v2/generate-page.prompt.md', dest: '.github/skills/generate-page.prompt.md' },
+    ],
+  },
+  {
+    name: 'Template Skills (v1)',
+    version: 1,
     description: 'Template blueprints for component, wrapper, page, data, state, style, and type files',
     files: [
-      { src: 'skills/tpl-component.prompt.md', dest: '.github/skills/tpl-component.prompt.md' },
-      { src: 'skills/tpl-template.prompt.md', dest: '.github/skills/tpl-template.prompt.md' },
-      { src: 'skills/tpl-page.prompt.md', dest: '.github/skills/tpl-page.prompt.md' },
-      { src: 'skills/tpl-page-story.prompt.md', dest: '.github/skills/tpl-page-story.prompt.md' },
-      { src: 'skills/tpl-data.prompt.md', dest: '.github/skills/tpl-data.prompt.md' },
-      { src: 'skills/tpl-state.prompt.md', dest: '.github/skills/tpl-state.prompt.md' },
-      { src: 'skills/tpl-style.prompt.md', dest: '.github/skills/tpl-style.prompt.md' },
-      { src: 'skills/tpl-type.prompt.md', dest: '.github/skills/tpl-type.prompt.md' },
+      { src: 'skills/v1/tpl-component.prompt.md', dest: '.github/skills/tpl-component.prompt.md' },
+      { src: 'skills/v1/tpl-template.prompt.md', dest: '.github/skills/tpl-template.prompt.md' },
+      { src: 'skills/v1/tpl-page.prompt.md', dest: '.github/skills/tpl-page.prompt.md' },
+      { src: 'skills/v1/tpl-page-story.prompt.md', dest: '.github/skills/tpl-page-story.prompt.md' },
+      { src: 'skills/v1/tpl-data.prompt.md', dest: '.github/skills/tpl-data.prompt.md' },
+      { src: 'skills/v1/tpl-state.prompt.md', dest: '.github/skills/tpl-state.prompt.md' },
+      { src: 'skills/v1/tpl-style.prompt.md', dest: '.github/skills/tpl-style.prompt.md' },
+      { src: 'skills/v1/tpl-type.prompt.md', dest: '.github/skills/tpl-type.prompt.md' },
+    ],
+  },
+  {
+    name: 'Template Skills (v2)',
+    version: 2,
+    description: 'Template blueprints for component, wrapper, page, data, state, style, and type files',
+    files: [
+      { src: 'skills/v2/tpl-component.prompt.md', dest: '.github/skills/tpl-component.prompt.md' },
+      { src: 'skills/v2/tpl-template.prompt.md', dest: '.github/skills/tpl-template.prompt.md' },
+      { src: 'skills/v2/tpl-page.prompt.md', dest: '.github/skills/tpl-page.prompt.md' },
+      { src: 'skills/v2/tpl-page-story.prompt.md', dest: '.github/skills/tpl-page-story.prompt.md' },
+      { src: 'skills/v2/tpl-data.prompt.md', dest: '.github/skills/tpl-data.prompt.md' },
+      { src: 'skills/v2/tpl-state.prompt.md', dest: '.github/skills/tpl-state.prompt.md' },
+      { src: 'skills/v2/tpl-style.prompt.md', dest: '.github/skills/tpl-style.prompt.md' },
+      { src: 'skills/v2/tpl-type.prompt.md', dest: '.github/skills/tpl-type.prompt.md' },
     ],
   },
   {
@@ -64,10 +102,19 @@ const categories: FileCategory[] = [
     ],
   },
   {
-    name: 'Project Instructions',
+    name: 'Project Instructions (v1)',
+    version: 1,
     description: 'Copilot project-wide instructions with Atomic Design conventions',
     files: [
-      { src: 'copilot-instructions.md', dest: '.github/copilot-instructions.md' },
+      { src: 'instructions/v1/copilot-instructions.md', dest: '.github/copilot-instructions.md' },
+    ],
+  },
+  {
+    name: 'Project Instructions (v2)',
+    version: 2,
+    description: 'Copilot project-wide instructions with Atomic Design conventions',
+    files: [
+      { src: 'instructions/v2/copilot-instructions.md', dest: '.github/copilot-instructions.md' },
     ],
   },
 ];
@@ -79,9 +126,18 @@ const initAction = async (options: { force?: boolean }) => {
 
   console.log('\n Alloy CLI — Install Copilot Agent & Skills\n');
 
+  const templateVersion = await select({
+    message: 'Which project template version?',
+    choices: [
+      { name: 'v2 — No explicit type/helper imports (latest)', value: 2 },
+      { name: 'v1 — Explicit imports from @_types/types and @helpers (legacy)', value: 1 },
+    ],
+    default: 'v2',
+  });
+
   const selectedCategories = await checkbox({
     message: 'What would you like to install?',
-    choices: categories.map((cat) => ({
+    choices: categories.filter(cat => cat.version === templateVersion || !cat.version).map((cat) => ({
       name: `${cat.name} — ${cat.description}`,
       value: cat.name,
       checked: true,

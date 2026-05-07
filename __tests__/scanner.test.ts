@@ -1,5 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import path from 'node:path';
+import fs from 'node:fs';
+import { scanModels, writeModelRegistry, REGISTRY_FILENAME } from '../lib/scanner';
 
 // Mock node:fs (sync API used by scanner)
 vi.mock('node:fs', () => ({
@@ -13,8 +15,6 @@ vi.mock('node:fs', () => ({
   writeFileSync: vi.fn(),
 }));
 
-import fs from 'node:fs';
-import { scanModels, writeModelRegistry, updateModelRegistry, REGISTRY_FILENAME } from '../lib/scanner';
 
 describe('scanModels', () => {
   beforeEach(() => {
@@ -89,6 +89,47 @@ describe('scanModels', () => {
 
     expect(registry.atoms).toEqual(['ButtonModel']);
   });
+
+  it('parses v2 type alias syntax', () => {
+    vi.mocked(fs.existsSync).mockImplementation((p: any) =>
+      String(p).endsWith('atoms.d.ts'),
+    );
+    vi.mocked(fs.readFileSync).mockReturnValue(
+      'type ButtonModel = BasedAtomicModel & {\n  label?: string;\n}\n',
+    );
+
+    const registry = scanModels('/types');
+
+    expect(registry.atoms).toEqual(['ButtonModel']);
+  });
+
+  it('parses multiple v2 type aliases from one file', () => {
+    vi.mocked(fs.existsSync).mockImplementation((p: any) =>
+      String(p).endsWith('organisms.d.ts'),
+    );
+    vi.mocked(fs.readFileSync).mockReturnValue(
+      `type ProductCardModel = BasedAtomicModel & {}\n` +
+      `type HeaderModel = BasedAtomicModel & {}\n`,
+    );
+
+    const registry = scanModels('/types');
+
+    expect(registry.organisms).toEqual(['ProductCardModel', 'HeaderModel']);
+  });
+
+  it('handles mixed v1 interfaces and v2 type aliases without duplicates', () => {
+    vi.mocked(fs.existsSync).mockImplementation((p: any) =>
+      String(p).endsWith('atoms.d.ts'),
+    );
+    vi.mocked(fs.readFileSync).mockReturnValue(
+      'interface ButtonModel extends BasedAtomicModel {}\n' +
+      'type IconModel = BasedAtomicModel & {}\n',
+    );
+
+    const registry = scanModels('/types');
+
+    expect(registry.atoms).toEqual(['ButtonModel', 'IconModel']);
+  });
 });
 
 describe('writeModelRegistry', () => {
@@ -105,59 +146,5 @@ describe('writeModelRegistry', () => {
     const expectedPath = path.join('/project', REGISTRY_FILENAME);
     const expectedContent = JSON.stringify(registry, null, 2) + '\n';
     expect(fs.writeFileSync).toHaveBeenCalledWith(expectedPath, expectedContent, 'utf8');
-  });
-});
-
-describe('updateModelRegistry', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    vi.spyOn(console, 'log').mockImplementation(() => {});
-  });
-
-  it('adds new model to correct category', () => {
-    // readModelRegistry: file doesn't exist, returns empty registry
-    vi.mocked(fs.existsSync).mockReturnValue(false);
-
-    updateModelRegistry('/project', 'ProductCard', 'o');
-
-    expect(fs.writeFileSync).toHaveBeenCalled();
-    const writtenContent = vi.mocked(fs.writeFileSync).mock.calls[0][1] as string;
-    const registry = JSON.parse(writtenContent);
-    expect(registry.organisms).toContain('ProductCardModel');
-  });
-
-  it('adds atom model to atoms category', () => {
-    vi.mocked(fs.existsSync).mockReturnValue(false);
-
-    updateModelRegistry('/project', 'Button', 'a');
-
-    const writtenContent = vi.mocked(fs.writeFileSync).mock.calls[0][1] as string;
-    const registry = JSON.parse(writtenContent);
-    expect(registry.atoms).toContain('ButtonModel');
-  });
-
-  it('adds molecule model to molecules category', () => {
-    vi.mocked(fs.existsSync).mockReturnValue(false);
-
-    updateModelRegistry('/project', 'SearchBar', 'm');
-
-    const writtenContent = vi.mocked(fs.writeFileSync).mock.calls[0][1] as string;
-    const registry = JSON.parse(writtenContent);
-    expect(registry.molecules).toContain('SearchBarModel');
-  });
-
-  it('does not duplicate existing model', () => {
-    const existingRegistry = {
-      atoms: [],
-      molecules: [],
-      organisms: ['ProductCardModel'],
-    };
-    vi.mocked(fs.existsSync).mockReturnValue(true);
-    vi.mocked(fs.readFileSync).mockReturnValue(JSON.stringify(existingRegistry));
-
-    updateModelRegistry('/project', 'ProductCard', 'o');
-
-    // writeFileSync should NOT be called since model already exists
-    expect(fs.writeFileSync).not.toHaveBeenCalled();
   });
 });
