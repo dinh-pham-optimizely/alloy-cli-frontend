@@ -7,7 +7,7 @@ import path from 'node:path';
 
 program
   .name('Alloy CLI Frontend')
-  .version('2.1.1')
+  .version('2.1.2')
   .description('Alloy CLI to generate frontend components and more');
 
 program
