@@ -1,55 +1,93 @@
 # Alloy CLI Frontend
 
+[![npm version](https://img.shields.io/npm/v/alloy-cli-frontend)](https://www.npmjs.com/package/alloy-cli-frontend)
+[![license](https://img.shields.io/npm/l/alloy-cli-frontend)](LICENSE)
+
 Alloy CLI Frontend is a command-line tool that installs a **GitHub Copilot agent** (`@alloy`) and scans your project's type definitions to build a model registry. The Copilot agent generates frontend components following **Atomic Design** patterns directly from VS Code Copilot Chat using natural language.
 
 ## Table of Contents
 
-- [Installation](#installation)
-    - [Init](#init)
-    - [Scan](#scan)
+- [Prerequisites](#prerequisites)
+- [Quick Start](#quick-start)
+- [Commands](#commands)
+  - [Init](#init)
+  - [Scan](#scan)
+- [Version Differences (v1 vs v2)](#version-differences-v1-vs-v2)
 - [Copilot Agent & Skills](#copilot-agent--skills)
-    - [What You Get](#what-you-get)
-    - [Using @alloy in Copilot Chat](#using-alloy-in-copilot-chat)
-    - [Included Skills](#included-skills)
+  - [What You Get](#what-you-get)
+  - [Using @alloy in Copilot Chat](#using-alloy-in-copilot-chat)
+  - [Included Skills](#included-skills)
 - [Contributing](#contributing)
 - [License](#license)
 
-## Installation
+## Prerequisites
 
-The tool is not really meant to be installed globally — you run it with `npx` in your project root to set up the agent and skills and generate the model registry. This ensures the agent and skills are always in sync with your project:
+- **Node.js** ≥ 20
+- **VS Code** with [GitHub Copilot Chat](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot-chat) enabled
+- A TypeScript/React project using **Atomic Design** conventions
+
+## Quick Start
+
+```bash
+# 1. Install the Copilot agent and skills
+npx alloy-cli-frontend init
+
+# 2. Scan your type definitions to build the model registry
+npx alloy-cli-frontend scan
+
+# 3. Restart VS Code, open Copilot Chat, and start generating
+#    @alloy Create an atom Button with label, onClick, and disabled. Prefix: acme
+```
+
+## Commands
+
+The tool is designed to be run via `npx` in your project root — no global install needed. This keeps the agent and skills in sync with your project.
 
 ### Init
 
-Installs the **Copilot agent and skills** into your project. This copies the `.github/agents/` and `.github/skills/alloy-scaffolder` files that power the `@alloy` Copilot Chat agent.
+Installs the **Copilot agent and skills** into your project. This copies the `.github/agents/`, `.github/skills/`, and `.github/instructions/` files that power the `@alloy` Copilot Chat agent.
 
 ```bash
-alloy-cli-frontend init
+npx alloy-cli-frontend init
 ```
 
-You'll need to choose the version of the agent and skills to install (v1 or v2). The versions differ in their templates and instructions — v2 has updated file naming conventions and simplified component templates.
+You'll be guided through two interactive prompts:
 
-You'll be presented with an interactive checklist to select which categories to install:
+1. **Template version** — choose v1 or v2 (see [Version Differences](#version-differences-v1-vs-v2))
+2. **Categories to install** — select which file groups to copy:
 
-- **Alloy Agent** — the `@alloy` orchestrator agent
-- **Generation Skills** — atom, molecule, organism, and page generators
-- **Template Skills** — blueprints for component, style, state, type, data, page, and template files
-- **Utility Skills** — dependency management and model property resolution
+| Category | Description |
+|----------|-------------|
+| **Alloy Agent** | The `@alloy` orchestrator agent |
+| **Generation Skills** | Atom, molecule, organism, and page generators |
+| **Template Skills** | Blueprints for component, style, state, type, data, page, and template files |
+| **Utility Skills** | Model property resolution |
 
 Existing files are skipped by default. Use `--force` to overwrite:
 
 ```bash
-alloy-cli-frontend init --force
+npx alloy-cli-frontend init --force
 ```
 
 ### Scan
 
-Scans your project's type definition files (`src/_types/*.d.ts`) and generates a **model registry** (`.alloy-models.json`) at the project root. The Copilot `@alloy` agent reads this compact registry to resolve property types instantly — instead of grepping through large `.d.ts` files on every invocation.
+Scans your project's type definition files (`src/_types/*.d.ts`) and generates a **model registry** (`.alloy-models.json`) at the project root. The `@alloy` agent reads this registry to resolve property types instantly — instead of grepping through `.d.ts` files on every invocation.
 
 ```bash
-alloy-cli-frontend scan
+npx alloy-cli-frontend scan
 ```
 
-The registry maps model names to their Atomic Design category:
+Your type definitions must extend `BasedAtomicModel` for the scanner to detect them. Both syntaxes are supported:
+
+```typescript
+// v1 — interface syntax
+interface ButtonModel extends BasedAtomicModel { /* ... */ }
+
+// v2 — type alias syntax
+type ButtonModel = BasedAtomicModel & { /* ... */ }
+```
+
+The scanner looks for three files — `atoms.d.ts`, `molecules.d.ts`, and `organisms.d.ts` — inside the type definitions directory and produces a categorized registry:
 
 ```json
 {
@@ -61,33 +99,40 @@ The registry maps model names to their Atomic Design category:
 
 #### Options
 
-| Option                    | Description                   | Default  |
-|---------------------------|-------------------------------|----------|
-| `-td, --type-directory`   | Type definitions directory    | `_types` |
+| Option | Description | Default |
+|--------|-------------|---------|
+| `-td, --type-directory <dir>` | Type definitions directory (relative to `src/`) | `_types` |
+
+## Version Differences (v1 vs v2)
+
+When running `init` you choose between two template versions. The core Atomic Design structure is the same; the differences are in file naming and import style:
+
+| Aspect | v1 | v2 |
+|--------|----|----|
+| **Component files** | `ComponentName.tsx`, `ComponentName.scss` | `index.tsx`, `index.scss` |
+| **Data files** | `componentNameCamelCase.ts` | `component-name-kebab-case.ts` |
+| **Type definitions** | `interface … extends BasedAtomicModel` | `type … = BasedAtomicModel & { }` |
+| **Imports** | Explicit (`import { Model } from '@_types/types'`) | Implicit (auto-import / no explicit path) |
+
+Choose **v2** for new projects. Use **v1** if your existing codebase already follows v1 conventions.
 
 ## Copilot Agent & Skills
 
-Alloy CLI Frontend includes a **GitHub Copilot agent** that brings component generation directly into VS Code Copilot Chat. Instead of running CLI commands and answering prompts one by one, you describe what you want in natural language and the agent generates all the files for you.
-
-### Setup
-
-Run the `init` command in your project root:
-
-```bash
-npx alloy-cli-frontend init
-```
-
-This installs the agent and skill files into your project's `.github/` directory. Restart VS Code (or reload the window) to activate.
+Alloy CLI Frontend includes a **GitHub Copilot agent** that brings component generation directly into VS Code Copilot Chat. Describe what you want in natural language and the agent generates all the files for you.
 
 ### What You Get
+
+After running `init`, the following files are added to your project's `.github/` directory:
 
 | Category | Files | Purpose |
 |----------|-------|---------|
 | Agent | `alloy.agent.md` | Orchestrator that parses your request and delegates to skills |
 | Generation Skills | 4 skills | Generate atoms, molecules, organisms, and pages |
 | Template Skills | 8 skills | Embedded template blueprints for every file type |
-| Utility Skills | 2 skills | Dependency management and smart property resolution |
+| Utility Skills | 1 skill | Smart property type resolution |
 | Instructions | `copilot-instructions.md` | Project-wide Atomic Design conventions for Copilot |
+
+> Restart VS Code (or reload the window) after running `init` to activate the agent.
 
 ### Using @alloy in Copilot Chat
 
@@ -145,11 +190,22 @@ The agent will:
 
 ## Contributing
 
-Contributions are welcome! To contribute:
+Contributions are welcome! To get started:
 
-1. Fork the repository.
-2. Create a feature branch.
-3. Submit a pull request.
+1. Fork the repository
+2. Clone your fork and install dependencies:
+   ```bash
+   bun install
+   ```
+3. Run the CLI locally:
+   ```bash
+   bun run cli -- <command>
+   ```
+4. Run tests:
+   ```bash
+   bun run test
+   ```
+5. Create a feature branch, commit your changes, and open a pull request
 
 ## License
 
