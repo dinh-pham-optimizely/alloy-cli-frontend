@@ -130,7 +130,6 @@ After running `init`, the following files are added to your project's `.github/`
 | Generation Skills | 4 skills | Generate atoms, molecules, organisms, and pages |
 | Template Skills | 8 skills | Embedded template blueprints for every file type |
 | Utility Skills | 1 skill | Smart property type resolution |
-| Instructions | `copilot-instructions.md` | Project-wide Atomic Design conventions for Copilot |
 
 > Restart VS Code (or reload the window) after running `init` to activate the agent.
 
