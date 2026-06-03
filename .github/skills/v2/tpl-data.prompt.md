@@ -1,5 +1,6 @@
 ---
-description: "Render a data/props file with explicit type import"
+name: tpl-data
+description: Render a data/props file with explicit type import
 version: 2
 ---
 

@@ -1,5 +1,6 @@
 ---
-description: "Render a TypeScript interface extending BasedAtomicModel"
+name: tpl-type
+description: Render a TypeScript interface extending BasedAtomicModel
 version: 2
 ---
 

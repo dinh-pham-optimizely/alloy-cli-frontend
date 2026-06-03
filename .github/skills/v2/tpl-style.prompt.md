@@ -1,5 +1,6 @@
 ---
-description: "Render an SCSS style file with the component's CSS class selector"
+name: tpl-style
+description: Render an SCSS style file with the component's CSS class selector
 version: 2
 ---
 

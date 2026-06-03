@@ -1,5 +1,6 @@
 ---
-description: "Render a story collection page with Story/StoryCollectionMeta import"
+name: tpl-page-story
+description: Render a story collection page with Story/StoryCollectionMeta import
 version: 2
 ---
 

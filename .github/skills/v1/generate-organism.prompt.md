@@ -1,5 +1,6 @@
 ---
-description: "Generate an Organism component with optional page, template, data, style, state, script, and type definition"
+name: generate-organism
+description: Generate an Organism component with optional page, template, data, style, state, script, and type definition
 version: 1
 ---
 
@@ -11,7 +12,7 @@ Generate an **Organism** component following the Atomic Design pattern. Organism
 
 - `componentName`: PascalCase component name (e.g., `ProductCard`, `Header`)
 - `projectPrefix`: CSS class prefix (e.g., `xx`)
-- `properties`: *(optional)* resolved property list from `#prompt:resolve-model-properties` — each with `name`, `type`, `source`
+- `properties`: *(optional)* resolved property list from `resolve-model-properties` — each with `name`, `type`, `source`
 
 ## Optional Files & Features
 
@@ -40,44 +41,44 @@ From the PascalCase `componentName`, derive:
 
 **Path**: `src/organisms/{kebab-name}/{componentName}.tsx`
 
-Use `#prompt:tpl-component` with `type` = `o` and the component's inputs to generate this file. If `properties` are provided, pass them to `#prompt:tpl-component` so it renders the destructuring line.
+Use `tpl-component` with `type` = `o` and the component's inputs to generate this file. If `properties` are provided, pass them to `tpl-component` so it renders the destructuring line.
 
 ### 2. Type definition (always generated — APPENDED)
 
 **Path**: `src/_types/organisms.d.ts`
 
-Use `#prompt:tpl-type` and **append** the output to the file. If `properties` are provided, pass them so the interface is populated with typed fields.
+Use `tpl-type` and **append** the output to the file. If `properties` are provided, pass them so the interface is populated with typed fields.
 
 ### 3. Template component (generated when page view is requested)
 
 **Path**: `src/templates/{kebab-name}/{componentName}Template.tsx`
 
-Use `#prompt:tpl-template` with `componentTypePlural` = `organisms` to generate this file. See `#prompt:tpl-template` for expected output.
+Use `tpl-template` with `componentTypePlural` = `organisms` to generate this file. See `tpl-template` for expected output.
 
 ### 4. Page component (generated when page view is requested)
 
 **Path**: `src/pages/{componentName}Page.tsx`
 
-- **Without story template** — Use `#prompt:tpl-page` to generate the file. See `#prompt:tpl-page` for expected output.
-- **With story template** — Use `#prompt:tpl-page-story` to generate the file. See `#prompt:tpl-page-story` for expected output.
+- **Without story template** — Use `tpl-page` to generate the file. See `tpl-page` for expected output.
+- **With story template** — Use `tpl-page-story` to generate the file. See `tpl-page-story` for expected output.
 
 ### 5. Data file (optional)
 
 **Path**: `src/_data/{camelCase}.ts`
 
-Use `#prompt:tpl-data` to generate this file.
+Use `tpl-data` to generate this file.
 
 ### 6. Style file (optional)
 
 **Path**: `src/organisms/{kebab-name}/{componentName}.scss`
 
-Use `#prompt:tpl-style` with `type` = `o` to generate this file.
+Use `tpl-style` with `type` = `o` to generate this file.
 
 ### 7. State file (optional)
 
 **Path**: `src/organisms/{kebab-name}/{componentName}.states.json`
 
-Use `#prompt:tpl-state` with `type` = `o` to generate this file.
+Use `tpl-state` with `type` = `o` to generate this file.
 
 ### 8. Script file (optional)
 
@@ -98,7 +99,7 @@ Create an empty file.
 
 ## Important Notes
 
-- Each file's content MUST exactly match the output of its corresponding `#prompt:tpl-*` skill — do NOT add, modify, or embellish beyond what the template produces
+- Each file's content MUST exactly match the output of its corresponding `tpl-*` skill — do NOT add, modify, or embellish beyond what the template produces
 - The type file uses **append** mode — add the new definition to the very BOTTOM (end) of `src/_types/organisms.d.ts`. NEVER prepend to the top or insert before existing definitions
 - Template component is ONLY generated when the user wants a separate page view
 - The page component imports from the template, which imports from the organism

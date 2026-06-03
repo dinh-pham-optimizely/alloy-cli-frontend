@@ -1,5 +1,6 @@
 ---
-description: "Generate an Atom component with optional style, state, script, type definition, page, template, and data file"
+name: generate-atom
+description: Generate an Atom component with optional style, state, script, type definition, page, template, and data file
 version: 1
 ---
 
@@ -11,7 +12,7 @@ Generate an (v1) **Atom** component following the Atomic Design pattern. Atoms a
 
 - `componentName`: PascalCase component name (e.g., `Button`, `IconArrow`)
 - `projectPrefix`: CSS class prefix (e.g., `xx`)
-- `properties`: *(optional)* resolved property list from `#prompt:resolve-model-properties` — each with `name`, `type`, `source`
+- `properties`: *(optional)* resolved property list from `resolve-model-properties` — each with `name`, `type`, `source`
 
 ## Optional Files
 
@@ -38,25 +39,25 @@ From the PascalCase `componentName`, derive:
 
 **Path**: `src/atoms/{kebab-name}/{componentName}.tsx`
 
-Use `#prompt:tpl-component` with `type` = `a` and the component's inputs to generate this file. If `properties` are provided, pass them to `#prompt:tpl-component` so it renders the destructuring line.
+Use `tpl-component` with `type` = `a` and the component's inputs to generate this file. If `properties` are provided, pass them to `tpl-component` so it renders the destructuring line.
 
 ### 2. Type definition (always generated — APPENDED)
 
 **Path**: `src/_types/atoms.d.ts`
 
-Use `#prompt:tpl-type` and **append** the output to the file (do not overwrite). If `properties` are provided, pass them so the interface is populated with typed fields.
+Use `tpl-type` and **append** the output to the file (do not overwrite). If `properties` are provided, pass them so the interface is populated with typed fields.
 
 ### 3. Style file (optional)
 
 **Path**: `src/atoms/{kebab-name}/{componentName}.scss`
 
-Use `#prompt:tpl-style` with `type` = `a` to generate this file.
+Use `tpl-style` with `type` = `a` to generate this file.
 
 ### 4. State file (optional)
 
 **Path**: `src/atoms/{kebab-name}/{componentName}.states.json`
 
-Use `#prompt:tpl-state` with `type` = `a` to generate this file.
+Use `tpl-state` with `type` = `a` to generate this file.
 
 ### 5. Script file (optional)
 
@@ -70,20 +71,20 @@ Create an empty file. This is the entry point for component-specific JavaScript.
 
 When the user requests a page, ask if they want to use the **story template** format.
 
-- **Without story template** — Use `#prompt:tpl-page` to generate the file. See `#prompt:tpl-page` for expected output.
-- **With story template** — Use `#prompt:tpl-page-story` to generate the file. See `#prompt:tpl-page-story` for expected output.
+- **Without story template** — Use `tpl-page` to generate the file. See `tpl-page` for expected output.
+- **With story template** — Use `tpl-page-story` to generate the file. See `tpl-page-story` for expected output.
 
 ### 7. Template component (auto-created when page is requested)
 
 **Path**: `src/templates/{kebab-name}/{componentName}Template.tsx`
 
-Use `#prompt:tpl-template` with `componentTypePlural` = `atoms` to generate this file. See `#prompt:tpl-template` for expected output.
+Use `tpl-template` with `componentTypePlural` = `atoms` to generate this file. See `tpl-template` for expected output.
 
 ### 8. Data file (optional — asked when page is requested)
 
 **Path**: `src/_data/{camelCase}.ts`
 
-Use `#prompt:tpl-data` to generate this file.
+Use `tpl-data` to generate this file.
 
 ## Generation Order
 
@@ -98,7 +99,7 @@ Use `#prompt:tpl-data` to generate this file.
 
 ## Important Notes
 
-- Each file's content MUST exactly match the output of its corresponding `#prompt:tpl-*` skill — do NOT add, modify, or embellish beyond what the template produces
+- Each file's content MUST exactly match the output of its corresponding `tpl-*` skill — do NOT add, modify, or embellish beyond what the template produces
 - The type file uses **append** mode — add the new definition to the very BOTTOM (end) of `src/_types/atoms.d.ts`. NEVER prepend to the top or insert before existing definitions
 - Create directories if they don't exist
 - The component, style, and state files all go in `src/atoms/{kebab-name}/`
