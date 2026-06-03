@@ -1,5 +1,6 @@
 ---
-description: "Render a component TSX file from the component template"
+name: tpl-component
+description: Render a component TSX file from the component template
 version: 1
 ---
 
@@ -16,7 +17,7 @@ Generates the main React component `.tsx` file for any Atomic Design component t
 - `type` — type abbreviation: `a`, `m`, or `o`
 - `isNeedScript` — whether to add RequireJs import and JSX
 - `isNeedStyle` — whether to add RequireCss import and JSX
-- `properties` — *(optional)* list of resolved properties from `#prompt:resolve-model-properties`. Each has `name`, `type`, and `optional`.
+- `properties` — *(optional)* list of resolved properties from `resolve-model-properties`. Each has `name`, `type`, and `optional`.
 
 ## Template
 

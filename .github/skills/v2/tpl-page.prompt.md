@@ -1,5 +1,6 @@
 ---
-description: "Render a standard page component that imports data and template"
+name: tpl-page
+description: Render a standard page component that imports data and template
 version: 2
 ---
 

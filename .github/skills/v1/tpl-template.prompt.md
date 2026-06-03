@@ -1,5 +1,6 @@
 ---
-description: "Render a template wrapper component with explicit type import"
+name: tpl-template
+description: Render a template wrapper component with explicit type import
 version: 1
 ---
 

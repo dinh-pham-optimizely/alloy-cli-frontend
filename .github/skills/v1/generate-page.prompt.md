@@ -1,5 +1,6 @@
 ---
-description: "Generate a Page component with optional story template and template component"
+name: generate-page
+description: Generate a Page component with optional story template and template component
 version: 1
 ---
 
@@ -36,17 +37,17 @@ From the PascalCase `componentName`, derive:
 
 **Path**: `src/pages/{componentName}Page.tsx`
 
-Use `#prompt:tpl-page` to generate this file. See `#prompt:tpl-page` for expected output.
+Use `tpl-page` to generate this file. See `tpl-page` for expected output.
 
 **With story template**:
 
-Use `#prompt:tpl-page-story` instead. See `#prompt:tpl-page-story` for expected output.
+Use `tpl-page-story` instead. See `tpl-page-story` for expected output.
 
 ### 2. Template component (optional)
 
 **Path**: `src/templates/{kebab-name}/{componentName}Template.tsx`
 
-Use `#prompt:tpl-template` with `componentTypePlural` = `organisms` to generate this file (standalone pages wrap organisms by default). See `#prompt:tpl-template` for expected output.
+Use `tpl-template` with `componentTypePlural` = `organisms` to generate this file (standalone pages wrap organisms by default). See `tpl-template` for expected output.
 
 ## Generation Order
 
@@ -55,7 +56,7 @@ Use `#prompt:tpl-template` with `componentTypePlural` = `organisms` to generate 
 
 ## Important Notes
 
-- Each file's content MUST exactly match the output of its corresponding `#prompt:tpl-*` skill — do NOT add, modify, or embellish beyond what the template produces
+- Each file's content MUST exactly match the output of its corresponding `tpl-*` skill — do NOT add, modify, or embellish beyond what the template produces
 - Create the `src/pages/` directory if it doesn't exist
 - Create `src/templates/{kebab-name}/` directory if generating a template
 - The page imports data from `@data/{kebab-name}` and template from `@templates/{kebab-name}/{componentName}`

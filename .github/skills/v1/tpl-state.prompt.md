@@ -1,5 +1,6 @@
 ---
-description: "Render a JSON state configuration file for a component"
+name: tpl-state
+description: Render a JSON state configuration file for a component
 version: 1
 ---
 
