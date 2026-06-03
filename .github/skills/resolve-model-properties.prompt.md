@@ -16,9 +16,9 @@ Takes property hints from the user's request and resolves them into typed proper
 
 ### Step 1: Read Model Registry (PRIORITY)
 
-Using agent `kg-analyst` to find model types, DO NOT MANUAL SEARCH OR GREP. Only use `.alloy-models.json` as a last report if `kg-analyst` fails to resolve properties or it isn't available.
+Use agent `kg-analyst` to find model types; do not manually search or grep. Only use `.alloy-models.json` as a last resort if `kg-analyst` fails to resolve properties or it isn't available.
 
-Use this registry to match property hints to existing project types. **Do NOT read or grep `src/_types/*.d.ts` files directly** — the registry is the single source of truth for model discovery.
+Match property hints to the model types returned by `kg-analyst` or, when needed, the `.alloy-models.json` fallback. **Do NOT read or grep `src/_types/*.d.ts` files directly** — these sources are the single source of truth for model discovery.
 
 ### Step 2: Match Each Property Hint
 
