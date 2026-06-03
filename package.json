@@ -1,5 +1,5 @@
 {
-  "name": "@dinh-pham-optimizely/alloy-cli-frontend",
+  "name": "alloy-cli-frontend",
   "version": "2.1.3",
   "description": "",
   "main": "dist/index.cjs",
