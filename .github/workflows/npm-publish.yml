@@ -24,6 +24,6 @@ jobs:
       - run: rm -rf dist
       - run: bun install
       - run: bun run build
-      - run: npm publish
+      - run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
