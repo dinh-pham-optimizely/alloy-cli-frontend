@@ -103,16 +103,16 @@ When generating files, apply these transformations to the PascalCase component n
 
 ## Template Skills
 
-| Template       | Load skill          |
-|----------------|---------------------|
-| **Component**  | `tpl-component`     |
-| **Data**       | `tpl-data`          |
-| **Page**       | `tpl-page`          |
-| **Page Story** | `tpl-page-template` |
-| **State**      | `tpl-state`         |
-| **Style**      | `tpl-style`         |
-| **Template**   | `tpl-template`      |
-| **Type**       | `tpl-type`          |
+| Template       | Load skill       |
+|----------------|------------------|
+| **Component**  | `tpl-component`  |
+| **Data**       | `tpl-data`       |
+| **Page**       | `tpl-page`       |
+| **Page Story** | `tpl-page-story` |
+| **State**      | `tpl-state`      |
+| **Style**      | `tpl-style`      |
+| **Template**   | `tpl-template`   |
+| **Type**       | `tpl-type`       |
 
 ## Handling Ambiguous Requests
 
@@ -135,7 +135,7 @@ When generating files, apply these transformations to the PascalCase component n
 - ALWAYS ask for confirmation before generating files
 - NEVER generate files without knowing the project prefix
 - **NEVER add content (imports, JSX, HTML elements, CSS rules, JSON keys, or TypeScript code) beyond what is explicitly
-  defined in the referenced `tpl-*/SKILL.md` template. The templates are the SINGLE SOURCE OF TRUTH for file content —
+  defined in the referenced `tpl-*` template. The templates are the SINGLE SOURCE OF TRUTH for file content —
   output ONLY what they specify with placeholders replaced, nothing more**
 - **Each generated file MUST exactly match the output of its corresponding `tpl-*` skill. Do not add, modify,
   embellish, or invent any content beyond what the template produces**
